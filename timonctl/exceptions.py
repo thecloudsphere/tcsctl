@@ -1,0 +1,2 @@
+class TimonApiException(Exception):
+    pass

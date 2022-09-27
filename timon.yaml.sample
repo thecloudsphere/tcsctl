@@ -1,0 +1,14 @@
+---
+profiles:
+  default:
+    api_url: http://api.timon.pebblestones.cloud
+    api_version: v1
+    insecure: False
+    auth:
+      auth_url: http://api.timon.pebblestones.cloud
+      username:
+      organisation_name:
+      project_name:
+      password:
+      # token_id:
+      # token_secret:
