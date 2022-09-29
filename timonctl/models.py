@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Optional
 import uuid as uuid_pkg
 
 from pydantic import BaseModel, Json
@@ -23,9 +23,25 @@ class TimonBaseModel(BaseModel):
         return list(cls.schema(alias).get("properties").keys())
 
 
-class Blueprint(TimonBaseModel):
-    name: str
+# blueprint
+
+class BlueprintBase(BaseModel):
+    name: Optional[str]
+    repository: Optional[str]
+    repository_server: Optional[str]
 
 
-class Environment(TimonBaseModel):
-    name: str
+class Blueprint(TimonBaseModel, BlueprintBase):
+    pass
+
+
+# environment
+
+class EnvironmentBase(BaseModel):
+    name: Optional[str]
+    repository: Optional[str]
+    repository_server: Optional[str]
+
+
+class Environment(TimonBaseModel, EnvironmentBase):
+    pass

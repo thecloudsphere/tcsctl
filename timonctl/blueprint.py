@@ -11,8 +11,18 @@ app = typer.Typer()
 
 
 @app.command("import")
-def import_blueprint(repository: str, name: str):
-    logger.info("STUB: import_blueprint")
+def import_blueprint(ctx: typer.Context, name: str, repository: str = "timontech/blueprints", repository_server="https://github.com", project_id_or_name: str = typer.Option(default=None)):
+    if project_id_or_name:
+        pass
+    elif ctx.obj.project_id:
+        project_id = ctx.obj.project_id
+
+    try:
+        t = Timon(ctx.obj.profile)
+        blueprint = t.import_blueprint(name, repository, repository_server, project_id)
+        print(blueprint)
+    except TimonApiException as e:
+        logger.error(str(e))
 
 
 @app.command("list")

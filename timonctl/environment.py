@@ -10,8 +10,18 @@ app = typer.Typer()
 
 
 @app.command("import")
-def import_environment(repository: str, name: str):
-    logger.info("STUB: import_environment")
+def import_environment(ctx: typer.Context, name: str, repository: str = "timontech/environments", repository_server="https://github.com", project_id_or_name: str = typer.Option(default=None)):
+    if project_id_or_name:
+        pass
+    elif ctx.obj.project_id:
+        project_id = ctx.obj.project_id
+
+    try:
+        t = Timon(ctx.obj.profile)
+        environment = t.import_environment(name, repository, repository_server, project_id)
+        print(environment)
+    except TimonApiException as e:
+        logger.error(str(e))
 
 
 @app.command("list")
