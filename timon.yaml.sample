@@ -1,4 +1,5 @@
 ---
+# log_level: DEBUG
 profiles:
   default:
     api_url: http://api.timon.pebblestones.cloud
