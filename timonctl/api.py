@@ -27,7 +27,7 @@ class Client:
     def _do(self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None, headers: Dict = {}) -> Result:
         url = urljoin(str(self.api_url), endpoint)
 
-        log_line_pre = f"method={http_method}, url={url}, params={ep_params} headers={headers}"
+        log_line_pre = f"method={http_method}, url={url}, params={ep_params}, headers={headers}"
         log_line_post = ', '.join((log_line_pre, "success={}, status_code={}, message={}"))
 
         # Log HTTP params and perform an HTTP request, catching and re-raising any exceptions
@@ -41,7 +41,7 @@ class Client:
 
         # If status_code in 200-299 range, return success Result with data, otherwise raise exception
         is_success = 299 >= response.status_code >= 200     # 200 to 299 is OK
-        log_line = log_line_post.format(is_success, response.status_code, response.reason)
+        log_line = log_line_post.format(is_success, response.status_code, response.reason, response.headers)
         if is_success:
             logger.debug(log_line)
             return Result(status_code=response.status_code, headers=response.headers, message=response.reason, data=response.content)
@@ -85,6 +85,10 @@ class Timon:
 
     # blueprints
 
+    def delete_blueprint(self, blueprint_id: uuid_pkg.UUID, project_id: uuid_pkg.UUID) -> Result:
+        result = self.client.delete(f"blueprints/{project_id}/{blueprint_id}")
+        return result
+
     def get_blueprint(self, blueprint_id: uuid_pkg.UUID, project_id: uuid_pkg.UUID) -> Blueprint:
         result = self.client.get(f"blueprints/{project_id}/{blueprint_id}")
         blueprint = Blueprint(**result.data)
@@ -106,6 +110,10 @@ class Timon:
         return blueprint
 
     # environments
+
+    def delete_environment(self, environment_id: uuid_pkg.UUID, project_id: uuid_pkg.UUID) -> Result:
+        result = self.client.delete(f"environments/{project_id}/{environment_id}")
+        return result
 
     def get_environment(self, environment_id: uuid_pkg.UUID, project_id: uuid_pkg.UUID) -> Environment:
         result = self.client.get(f"environments/{project_id}/{environment_id}")

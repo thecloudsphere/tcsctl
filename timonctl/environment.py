@@ -65,5 +65,15 @@ def update_environment(name: str):
 
 
 @app.command("delete")
-def delete_environment(name: str):
-    logger.info("STUB: delete_environment")
+def delete_environment(ctx: typer.Context, environment_id_or_name: str, project_id_or_name: str = typer.Option(default=None)):
+    if project_id_or_name:
+        pass
+    elif ctx.obj.project_id:
+        project_id = ctx.obj.project_id
+
+    try:
+        t = Timon(ctx.obj.profile)
+        result = t.delete_environment(environment_id_or_name, project_id)
+        print(result)
+    except TimonApiException as e:
+        logger.error(str(e))
