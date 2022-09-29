@@ -27,13 +27,12 @@ class Client:
     def _do(self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None, headers: Dict = {}) -> Result:
         url = urljoin(str(self.api_url), endpoint)
 
-        log_line_pre = f"method={http_method}, url={url}, params={ep_params}"
+        log_line_pre = f"method={http_method}, url={url}, params={ep_params} headers={headers}"
         log_line_post = ', '.join((log_line_pre, "success={}, status_code={}, message={}"))
 
         # Log HTTP params and perform an HTTP request, catching and re-raising any exceptions
         try:
             logger.debug(log_line_pre)
-            logger.debug(f"headers = {headers}")
             response = requests.request(method=http_method, url=url, verify=self.profile.insecure,
                                         headers=headers, params=ep_params, json=data)
         except requests.exceptions.RequestException as e:
