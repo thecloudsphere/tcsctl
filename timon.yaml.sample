@@ -5,11 +5,15 @@ profiles:
     api_url: http://api.timon.pebblestones.cloud
     api_version: v1
     insecure: False
+    project_name:
+    # project_id:
     auth:
       auth_url: http://api.timon.pebblestones.cloud
+      # user_id:
       username:
+      # organisation_id:
       organisation_name:
-      project_name:
       password:
+      # token_name:
       # token_id:
       # token_secret:

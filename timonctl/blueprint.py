@@ -1,6 +1,5 @@
 from tabulate import tabulate
 import typer
-import uuid as uuid_pkg
 
 from . import logger
 from .api import Timon
@@ -17,7 +16,12 @@ def import_blueprint(repository: str, name: str):
 
 
 @app.command("list")
-def list_blueprints(ctx: typer.Context, project_id: uuid_pkg.UUID):
+def list_blueprints(ctx: typer.Context, project_id_or_name: str = typer.Option(default=None)):
+    if project_id_or_name:
+        pass
+    elif ctx.obj.project_id:
+        project_id = ctx.obj.project_id
+
     try:
         t = Timon(ctx.obj.profile)
         blueprints = t.get_blueprints(project_id)
@@ -27,10 +31,15 @@ def list_blueprints(ctx: typer.Context, project_id: uuid_pkg.UUID):
 
 
 @app.command("show")
-def show_blueprint(ctx: typer.Context, blueprint_id: uuid_pkg.UUID, project_id: uuid_pkg.UUID = typer.Option(default=None)):
+def show_blueprint(ctx: typer.Context, blueprint_id_or_name: str, project_id_or_name: str = typer.Option(default=None)):
+    if project_id_or_name:
+        pass
+    elif ctx.obj.project_id:
+        project_id = ctx.obj.project_id
+
     try:
         t = Timon(ctx.obj.profile)
-        blueprint = t.get_blueprint(blueprint_id, project_id)
+        blueprint = t.get_blueprint(blueprint_id_or_name, project_id)
         print(blueprint)
     except TimonApiException as e:
         logger.error(str(e))

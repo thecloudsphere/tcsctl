@@ -2,7 +2,7 @@ from types import SimpleNamespace
 
 import typer
 
-from . import logger
+from . import logger, settings
 from .blueprint import app as app_blueprint
 from .environment import app as app_environment
 
@@ -26,7 +26,12 @@ def logout(ctx: typer.Context):
 def entrypoint(ctx: typer.Context,
                profile: str = typer.Option("default", envvar="TIMON_PROFILE")):
 
-    ctx.obj = SimpleNamespace(profile=profile)
+    project_id = settings.profiles.get(profile).project_id
+
+    ctx.obj = SimpleNamespace(
+        profile=profile,
+        project_id=project_id
+    )
 
 
 # NOTE: this intermediate step is required to be able to add common

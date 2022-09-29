@@ -1,6 +1,5 @@
 from tabulate import tabulate
 import typer
-import uuid as uuid_pkg
 
 from . import logger
 from .api import Timon
@@ -16,7 +15,12 @@ def import_environment(repository: str, name: str):
 
 
 @app.command("list")
-def list_environment(ctx: typer.Context, project_id: uuid_pkg.UUID):
+def list_environment(ctx: typer.Context, project_id_or_name: str = typer.Option(default=None)):
+    if project_id_or_name:
+        pass
+    elif ctx.obj.project_id:
+        project_id = ctx.obj.project_id
+
     try:
         t = Timon(ctx.obj.profile)
         environments = t.get_environments(project_id)
@@ -26,10 +30,15 @@ def list_environment(ctx: typer.Context, project_id: uuid_pkg.UUID):
 
 
 @app.command("show")
-def show_environment(ctx: typer.Context, environment_id: uuid_pkg.UUID, project_id: uuid_pkg.UUID = typer.Option(default=None)):
+def show_environment(ctx: typer.Context, environment_id_or_name: str, project_id_or_name: str = typer.Option(default=None)):
+    if project_id_or_name:
+        pass
+    elif ctx.obj.project_id:
+        project_id = ctx.obj.project_id
+
     try:
         t = Timon(ctx.obj.profile)
-        environment = t.get_environment(environment_id, project_id)
+        environment = t.get_environment(environment_id_or_name, project_id)
         print(environment)
     except TimonApiException as e:
         logger.error(str(e))
