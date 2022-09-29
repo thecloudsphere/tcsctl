@@ -59,10 +59,9 @@ List all environments assigned to a specific project:
 ---
 profiles:
   default:
-    api_url: http://api.timon.pebblestones.cloud
+    api_url: http://api.timon.osism.tech/api/
     api_version: 1
     auth:
-      auth_url: http://api.timon.pebblestones.cloud
       username:
       organisation_name:
       project_name:

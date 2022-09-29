@@ -2,13 +2,12 @@
 # log_level: DEBUG
 profiles:
   default:
-    api_url: http://api.timon.pebblestones.cloud
+    api_url: http://api.timon.osism.tech/api/
     api_version: v1
     insecure: False
     project_name:
     # project_id:
     auth:
-      auth_url: http://api.timon.pebblestones.cloud
       # user_id:
       username:
       # organisation_id:
