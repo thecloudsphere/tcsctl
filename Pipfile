@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+PyYAML = "==6.0"
 dynaconf = "==3.1.11"
 loguru = "==0.6.0"
 pydantic = "==1.10.2"

@@ -1,12 +1,13 @@
 ---
 sample:
   environment: terraform/base
-  blueprint: terraform/minimal/openstack
+  blueprint: terraform/openstack/minimal
+  blueprint_version: main
   inputs:
     prefix: sample
-    clouds.yaml: 
+    clouds.yaml:
       type: file
       path: clouds.yaml
     "cloud name": openstack
-    flavor: "SCS:1V:1:10"
+    flavor: "SCS-1V:1:10"
     "public network": public

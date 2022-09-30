@@ -2,18 +2,19 @@ from types import SimpleNamespace
 
 import typer
 
-from . import logger, settings
+from . import logger
 from .api import get_api_client
-from .common import is_valid_uuid
 from .blueprint import app as app_blueprint
+from .deployment import app as app_deployment
 from .environment import app as app_environment
 from .template import app as app_template
 
 
 app = typer.Typer()
 app.add_typer(app_blueprint, name="blueprint")
-app.add_typer(app_template, name="template")
+app.add_typer(app_deployment, name="deployment")
 app.add_typer(app_environment, name="environment")
+app.add_typer(app_template, name="template")
 
 
 @app.command()

@@ -27,9 +27,9 @@ def list_environment(ctx: typer.Context, project: str = typer.Option(default=Non
 
 
 @app.command("show")
-def show_environment(ctx: typer.Context, environment: str, project: str = typer.Option(default=None)):
+def show_environment(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
     try:
-        environment = ctx.obj.client.get_environment(environment, project)
+        environment = ctx.obj.client.get_environment(name, project)
         print(environment)
     except TimonApiException as e:
         logger.error(str(e))
@@ -46,9 +46,9 @@ def update_environment(name: str):
 
 
 @app.command("delete")
-def delete_environment(ctx: typer.Context, environment: str, project: str = typer.Option(default=None)):
+def delete_environment(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
     try:
-        result = ctx.obj.client.delete_environment(environment, project)
+        result = ctx.obj.client.delete_environment(name, project)
         print(result)
     except TimonApiException as e:
         logger.error(str(e))

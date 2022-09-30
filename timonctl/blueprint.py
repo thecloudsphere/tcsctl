@@ -28,9 +28,9 @@ def list_blueprints(ctx: typer.Context, project: str = typer.Option(default=None
 
 
 @app.command("show")
-def show_blueprint(ctx: typer.Context, blueprint: str, project: str = typer.Option(default=None)):
+def show_blueprint(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
     try:
-        blueprint = ctx.obj.client.get_blueprint(blueprint, project)
+        blueprint = ctx.obj.client.get_blueprint(name, project)
         print(blueprint)
     except TimonApiException as e:
         logger.error(str(e))
@@ -47,9 +47,9 @@ def update_blueprint(ctx: typer.Context, name: str):
 
 
 @app.command("delete")
-def delete_blueprint(ctx: typer.Context, blueprint: str, project: str = typer.Option(default=None)):
+def delete_blueprint(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
     try:
-        result = ctx.obj.client.delete_blueprint(blueprint, project)
+        result = ctx.obj.client.delete_blueprint(name, project)
         print(result)
     except TimonApiException as e:
         logger.error(str(e))

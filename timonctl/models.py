@@ -35,6 +35,18 @@ class Blueprint(TimonBaseModel, BlueprintBase):
     pass
 
 
+# deployment
+
+class DeploymentBase(BaseModel):
+    name: Optional[str]
+    template_id: Optional[str]
+    action: Optional[str] = None
+
+
+class Deployment(TimonBaseModel, DeploymentBase):
+    pass
+
+
 # environment
 
 class EnvironmentBase(BaseModel):
@@ -70,8 +82,12 @@ class Project(TimonBaseModel, ProjectBase):
 # template
 
 class TemplateBase(BaseModel):
-    name: Optional[str]
+    blueprint_id: Optional[str]
+    blueprint_version: Optional[str]
+    environment_id: Optional[str]
+    environment_version: Optional[str]
     inputs: Optional[str]
+    name: Optional[str]
 
 
 class Template(TimonBaseModel, TemplateBase):

@@ -10,9 +10,9 @@ app = typer.Typer()
 
 
 @app.command("import")
-def import_template(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
+def import_template(ctx: typer.Context, path: str, name: str, project: str = typer.Option(default=None)):
     try:
-        template = ctx.obj.client.import_template(name, project)
+        template = ctx.obj.client.import_template(path, name, project)
         print(template)
     except TimonApiException as e:
         logger.error(str(e))
@@ -43,9 +43,9 @@ def update_template(ctx: typer.Context, name: str):
 
 
 @app.command("delete")
-def delete_template(ctx: typer.Context, template: str, project: str = typer.Option(default=None)):
+def delete_template(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
     try:
-        result = ctx.obj.client.delete_template(template, project)
+        result = ctx.obj.client.delete_template(name, project)
         print(result)
     except TimonApiException as e:
         logger.error(str(e))

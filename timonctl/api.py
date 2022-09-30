@@ -2,15 +2,16 @@
 # - https://www.pretzellogix.net/2021/12/08/how-to-write-a-python3-sdk-library-module-for-a-json-rest-api/
 # - https://github.com/PretzelLogix/py-cat-api
 
+from typing import Dict
 from urllib.parse import urljoin
 import uuid as uuid_pkg
 
 import requests
-from typing import Dict
+import yaml
 
 from . import logger, settings
 from .common import is_valid_uuid
-from .exceptions import TimonApiException
+from .exceptions import TimonException, TimonApiException
 from .models import *
 
 
@@ -22,12 +23,11 @@ class Client:
         logger.debug(f"profile = {self.profile}")
         logger.debug(f"api_url = {self.api_url}")
 
-
     def _do(self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None, headers: Dict = {}) -> Result:
         url = urljoin(str(self.api_url), endpoint)
 
         log_line_pre = f"method={http_method}, url={url}, params={ep_params}"
-        log_line_post = ', '.join((log_line_pre, "success={}, status_code={}, message={}"))
+        # log_line_post = ', '.join((log_line_pre, "success={}, status_code={}, message={}"))
 
         # Log HTTP params and perform an HTTP request, catching and re-raising any exceptions
         try:
@@ -144,6 +144,54 @@ class Timon:
         blueprint = Blueprint(**result.data)
         return blueprint
 
+    # deployments
+
+    def create_deployment(self, name: str, template: str, project: str) -> Result:
+        project_id = self.get_project_id(project)
+        template_id = self.get_template_id(template)
+        deployment = DeploymentBase(
+            action="create",
+            name=name,
+            template_id=str(template_id)
+        )
+        result = self.client.post(f"deployments/{project_id}", data=deployment.dict())
+        deployment = Deployment(**result.data)
+        return deployment
+
+    def destroy_deployment(self, name: str, project: str) -> Result:
+        project_id = self.get_project_id(project)
+        deployment_id = self.get_deployment_id(name)
+        result = self.client.post(f"deployments/{project_id}/{deployment_id}/destroy")
+        return result
+
+    def get_deployment_id(self, deployment: str, project: str = None) -> uuid_pkg.UUID:
+        if is_valid_uuid(deployment):
+            return deployment
+
+        project_id = self.get_project_id(project)
+        result = self.client.get(f"deployments/{project_id}", ep_params={"q": deployment})
+        deployment = Deployment(**result.data[0])
+        return deployment.id
+
+    def delete_deployment(self, deployment: str, project: str) -> Result:
+        project_id = self.get_project_id(project)
+        deployment_id = self.get_deployment_id(deployment, project_id)
+        result = self.client.delete(f"deployments/{project_id}/{deployment_id}")
+        return result
+
+    def get_deployment(self, deployment: str, project: str) -> Deployment:
+        project_id = self.get_project_id(project)
+        deployment_id = self.get_deployment_id(deployment, project_id)
+        result = self.client.get(f"deployments/{project_id}/{deployment_id}")
+        deployment = Deployment(**result.data)
+        return deployment
+
+    def get_deployments(self, project: str) -> Deployment:
+        project_id = self.get_project_id(project)
+        result = self.client.get(f"deployments/{project_id}")
+        deployments = [Deployment(**deployment) for deployment in result.data]
+        return deployments
+
     # environments
 
     def get_environment_id(self, environment: str, project: str = None) -> uuid_pkg.UUID:
@@ -209,9 +257,55 @@ class Timon:
         templates = [Template(**template) for template in result.data]
         return templates
 
-    def import_template(self, name: str, project: str) -> uuid_pkg.UUID:
+    def import_template(self, path: str, name: str, project: str) -> uuid_pkg.UUID:
         project_id = self.get_project_id(project)
+
+        with open(path) as fp:
+            data = yaml.safe_load(fp)
+
+        if name not in data:
+            raise TimonException(f"Template {name} not found in {path}")
+
+        template_data = data[name]
+
+        if "environment_version" in template_data:
+            environment_version = template_data["environment_version"]
+        else:
+            environment_version = None
+
+        if "environment" in template_data:
+            environment_id = self.get_environment_id(template_data["environment"])
+        else:
+            environment_id = None
+
+        if "blueprint_version" in template_data:
+            blueprint_version = template_data["blueprint_version"]
+        else:
+            blueprint_version = None
+
+        if "blueprint" in template_data:
+            blueprint_id = self.get_blueprint_id(template_data["blueprint"])
+        else:
+            blueprint_id = None
+
+        if "inputs" in template_data:
+            inputs = template_data["inputs"]
+        else:
+            inputs = {}
+
+        # prepare inputs
+        for k, v in inputs.items():
+            if type(v) == dict:
+                if v["type"] == "file":
+                    with open(v["path"]) as fp:
+                        v = fp.read()
+                        inputs[k] = v
         template = TemplateBase(
+            blueprint_id=str(blueprint_id),
+            blueprint_version=blueprint_version,
+            environment_id=str(environment_id),
+            environment_version=environment_version,
+            inputs=yaml.dump(inputs),
             name=name
         )
         result = self.client.post(f"templates/{project_id}", data=template.dict())
@@ -227,7 +321,7 @@ class Timon:
         if is_valid_uuid(organisation):
             return organisation
 
-        result = self.client.get(f"organisations", ep_params={"q": organisation})
+        result = self.client.get("organisations", ep_params={"q": organisation})
         organisation = Organisation(**result.data[0])
         return organisation.id
 
