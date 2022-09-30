@@ -3,12 +3,16 @@ from types import SimpleNamespace
 import typer
 
 from . import logger, settings
+from .api import get_api_client
+from .common import is_valid_uuid
 from .blueprint import app as app_blueprint
 from .environment import app as app_environment
+from .template import app as app_template
 
 
 app = typer.Typer()
 app.add_typer(app_blueprint, name="blueprint")
+app.add_typer(app_template, name="template")
 app.add_typer(app_environment, name="environment")
 
 
@@ -26,11 +30,13 @@ def logout(ctx: typer.Context):
 def entrypoint(ctx: typer.Context,
                profile: str = typer.Option("default", envvar="TIMON_PROFILE")):
 
-    project_id = settings.profiles.get(profile).project_id
+    client = get_api_client(profile)
 
     ctx.obj = SimpleNamespace(
+        client=client,
+        organisationd_id=client.organisation_id,
         profile=profile,
-        project_id=project_id
+        project_id=client.project_id
     )
 
 

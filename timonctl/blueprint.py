@@ -2,7 +2,6 @@ from tabulate import tabulate
 import typer
 
 from . import logger
-from .api import Timon
 from .exceptions import TimonApiException
 from .models import *
 
@@ -11,45 +10,27 @@ app = typer.Typer()
 
 
 @app.command("import")
-def import_blueprint(ctx: typer.Context, name: str, repository: str = "timontech/blueprints", repository_server="https://github.com", project_id_or_name: str = typer.Option(default=None)):
-    if project_id_or_name:
-        pass
-    elif ctx.obj.project_id:
-        project_id = ctx.obj.project_id
-
+def import_blueprint(ctx: typer.Context, name: str, repository: str = "timontech/blueprints", repository_server="https://github.com", project: str = typer.Option(default=None)):
     try:
-        t = Timon(ctx.obj.profile)
-        blueprint = t.import_blueprint(name, repository, repository_server, project_id)
+        blueprint = ctx.obj.client.import_blueprint(name, repository, repository_server, project)
         print(blueprint)
     except TimonApiException as e:
         logger.error(str(e))
 
 
 @app.command("list")
-def list_blueprints(ctx: typer.Context, project_id_or_name: str = typer.Option(default=None)):
-    if project_id_or_name:
-        pass
-    elif ctx.obj.project_id:
-        project_id = ctx.obj.project_id
-
+def list_blueprints(ctx: typer.Context, project: str = typer.Option(default=None)):
     try:
-        t = Timon(ctx.obj.profile)
-        blueprints = t.get_blueprints(project_id)
+        blueprints = ctx.obj.client.get_blueprints(project)
         print(tabulate([x.dict().values() for x in blueprints], headers=Blueprint.get_field_names(), tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
 
 @app.command("show")
-def show_blueprint(ctx: typer.Context, blueprint_id_or_name: str, project_id_or_name: str = typer.Option(default=None)):
-    if project_id_or_name:
-        pass
-    elif ctx.obj.project_id:
-        project_id = ctx.obj.project_id
-
+def show_blueprint(ctx: typer.Context, blueprint: str, project: str = typer.Option(default=None)):
     try:
-        t = Timon(ctx.obj.profile)
-        blueprint = t.get_blueprint(blueprint_id_or_name, project_id)
+        blueprint = ctx.obj.client.get_blueprint(blueprint, project)
         print(blueprint)
     except TimonApiException as e:
         logger.error(str(e))
@@ -66,15 +47,9 @@ def update_blueprint(ctx: typer.Context, name: str):
 
 
 @app.command("delete")
-def delete_blueprint(ctx: typer.Context, blueprint_id_or_name: str, project_id_or_name: str = typer.Option(default=None)):
-    if project_id_or_name:
-        pass
-    elif ctx.obj.project_id:
-        project_id = ctx.obj.project_id
-
+def delete_blueprint(ctx: typer.Context, blueprint: str, project: str = typer.Option(default=None)):
     try:
-        t = Timon(ctx.obj.profile)
-        result = t.delete_blueprint(blueprint_id_or_name, project_id)
+        result = ctx.obj.client.delete_blueprint(blueprint, project)
         print(result)
     except TimonApiException as e:
         logger.error(str(e))

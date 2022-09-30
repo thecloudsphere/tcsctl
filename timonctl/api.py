@@ -9,6 +9,7 @@ import requests
 from typing import Dict
 
 from . import logger, settings
+from .common import is_valid_uuid
 from .exceptions import TimonApiException
 from .models import *
 
@@ -18,16 +19,14 @@ class Client:
         self.profile = settings.profiles.get(profile)
         self.api_url = urljoin(self.profile.api_url, f"{self.profile.api_version}/")
 
-        logger.debug(f"profile = {profile}")
+        logger.debug(f"profile = {self.profile}")
         logger.debug(f"api_url = {self.api_url}")
 
-        if not self.profile.insecure:
-            requests.packages.urllib3.disable_warnings()
 
     def _do(self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None, headers: Dict = {}) -> Result:
         url = urljoin(str(self.api_url), endpoint)
 
-        log_line_pre = f"method={http_method}, url={url}, params={ep_params}, headers={headers}"
+        log_line_pre = f"method={http_method}, url={url}, params={ep_params}"
         log_line_post = ', '.join((log_line_pre, "success={}, status_code={}, message={}"))
 
         # Log HTTP params and perform an HTTP request, catching and re-raising any exceptions
@@ -41,15 +40,18 @@ class Client:
 
         # If status_code in 200-299 range, return success Result with data, otherwise raise exception
         is_success = 299 >= response.status_code >= 200     # 200 to 299 is OK
-        log_line = log_line_post.format(is_success, response.status_code, response.reason, response.headers)
+        # log_line = log_line_post.format(is_success, response.status_code, response.reason)
         if is_success:
-            logger.debug(log_line)
+            # logger.debug(log_line)
             return Result(status_code=response.status_code, headers=response.headers, message=response.reason, data=response.content)
-        logger.error(log_line)
+        # logger.error(log_line)
         raise TimonApiException(f"{response.status_code}: {response.reason}")
 
-    def get(self, endpoint: str, ep_params: Dict = None) -> Result:
-        return self._do(http_method='GET', endpoint=endpoint, ep_params=ep_params)
+    def get(self, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
+        return self._do(http_method='GET', endpoint=endpoint, ep_params=ep_params, data=data)
+
+    def patch(self, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
+        return self._do(http_method='PATCH', endpoint=endpoint, ep_params=ep_params, data=data)
 
     def post(self, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
         return self._do(http_method='POST', endpoint=endpoint, ep_params=ep_params, data=data)
@@ -83,23 +85,56 @@ class Timon:
         self.profile = settings.profiles.get(profile)
         self.client = Client(profile=profile)
 
+        if not self.profile.insecure:
+            requests.packages.urllib3.disable_warnings()
+
+        organisation = settings.profiles.get(profile).auth.organisation
+        if is_valid_uuid(organisation):
+            self.organisation_id = organisation
+        else:
+            self.organisation_id = self.get_organisation_id(organisation)
+
+        project = settings.profiles.get(profile).auth.project
+        if is_valid_uuid(project):
+            self.project_id = project
+        else:
+            self.project_id = self.get_project_id(self.organisation_id, project)
+
+        logger.debug(f"organisation = {self.organisation_id}")
+        logger.debug(f"project = {self.project_id}")
+
     # blueprints
 
-    def delete_blueprint(self, blueprint_id: uuid_pkg.UUID, project_id: uuid_pkg.UUID) -> Result:
+    def get_blueprint_id(self, blueprint: str, project: str = None) -> uuid_pkg.UUID:
+        if is_valid_uuid(blueprint):
+            return blueprint
+
+        project_id = self.get_project_id(project)
+        result = self.client.get(f"blueprints/{project_id}", ep_params={"q": blueprint})
+        blueprint = Blueprint(**result.data[0])
+        return blueprint.id
+
+    def delete_blueprint(self, blueprint: str, project: str = None) -> Result:
+        project_id = self.get_project_id(project)
+        blueprint_id = self.get_blueprint_id(blueprint, project_id)
         result = self.client.delete(f"blueprints/{project_id}/{blueprint_id}")
         return result
 
-    def get_blueprint(self, blueprint_id: uuid_pkg.UUID, project_id: uuid_pkg.UUID) -> Blueprint:
+    def get_blueprint(self, blueprint: str, project: str) -> Blueprint:
+        project_id = self.get_project_id(project)
+        blueprint_id = self.get_blueprint_id(blueprint, project_id)
         result = self.client.get(f"blueprints/{project_id}/{blueprint_id}")
         blueprint = Blueprint(**result.data)
         return blueprint
 
-    def get_blueprints(self, project_id: uuid_pkg.UUID) -> Blueprint:
+    def get_blueprints(self, project: str) -> Blueprint:
+        project_id = self.get_project_id(project)
         result = self.client.get(f"blueprints/{project_id}")
         blueprints = [Blueprint(**blueprint) for blueprint in result.data]
         return blueprints
 
-    def import_blueprint(self, name: str, repository: str, repository_server: str, project_id: uuid_pkg.UUID) -> uuid_pkg.UUID:
+    def import_blueprint(self, name: str, repository: str, repository_server: str, project: str) -> uuid_pkg.UUID:
+        project_id = self.get_project_id(project)
         blueprint = BlueprintBase(
             repository=repository,
             repository_server=repository_server,
@@ -111,21 +146,36 @@ class Timon:
 
     # environments
 
-    def delete_environment(self, environment_id: uuid_pkg.UUID, project_id: uuid_pkg.UUID) -> Result:
+    def get_environment_id(self, environment: str, project: str = None) -> uuid_pkg.UUID:
+        if is_valid_uuid(environment):
+            return environment
+
+        project_id = self.get_project_id(project)
+        result = self.client.get(f"environments/{project_id}", ep_params={"q": environment})
+        environment = Environment(**result.data[0])
+        return environment.id
+
+    def delete_environment(self, environment: str, project: str) -> Result:
+        project_id = self.get_project_id(project)
+        environment_id = self.get_environment_id(environment, project_id)
         result = self.client.delete(f"environments/{project_id}/{environment_id}")
         return result
 
-    def get_environment(self, environment_id: uuid_pkg.UUID, project_id: uuid_pkg.UUID) -> Environment:
+    def get_environment(self, environment: str, project: str) -> Environment:
+        project_id = self.get_project_id(project)
+        environment_id = self.get_environment_id(environment, project_id)
         result = self.client.get(f"environments/{project_id}/{environment_id}")
         environment = Environment(**result.data)
         return environment
 
-    def get_environments(self, project_id: uuid_pkg.UUID) -> Environment:
+    def get_environments(self, project: str) -> Environment:
+        project_id = self.get_project_id(project)
         result = self.client.get(f"environments/{project_id}")
         environments = [Environment(**environment) for environment in result.data]
         return environments
 
-    def import_environment(self, name: str, repository: str, repository_server: str, project_id: uuid_pkg.UUID) -> uuid_pkg.UUID:
+    def import_environment(self, name: str, repository: str, repository_server: str, project: str) -> uuid_pkg.UUID:
+        project_id = self.get_project_id(project)
         environment = EnvironmentBase(
             repository=repository,
             repository_server=repository_server,
@@ -135,10 +185,69 @@ class Timon:
         environment = Environment(**result.data)
         return environment
 
+    # templates
+
+    def get_template_id(self, template: str, project: str = None) -> uuid_pkg.UUID:
+        if is_valid_uuid(template):
+            return template
+
+        project_id = self.get_project_id(project)
+
+        result = self.client.get(f"templates/{project_id}", ep_params={"q": template})
+        template = Template(**result.data[0])
+        return template.id
+
+    def delete_template(self, template: str, project: str) -> Result:
+        project_id = self.get_project_id(project)
+        template_id = self.get_template_id(template, project_id)
+        result = self.client.delete(f"templates/{project_id}/{template_id}")
+        return result
+
+    def get_templates(self, project: str) -> Template:
+        project_id = self.get_project_id(project)
+        result = self.client.get(f"templates/{project_id}")
+        templates = [Template(**template) for template in result.data]
+        return templates
+
+    def import_template(self, name: str, project: str) -> uuid_pkg.UUID:
+        project_id = self.get_project_id(project)
+        template = TemplateBase(
+            name=name
+        )
+        result = self.client.post(f"templates/{project_id}", data=template.dict())
+        template = Template(**result.data)
+        return template
+
     # other
+
+    def get_organisation_id(self, organisation: str = None) -> uuid_pkg.UUID:
+        if not organisation:
+            return self.organisation_id
+
+        if is_valid_uuid(organisation):
+            return organisation
+
+        result = self.client.get(f"organisations", ep_params={"q": organisation})
+        organisation = Organisation(**result.data[0])
+        return organisation.id
+
+    def get_project_id(self, organisation_id, project: str = None) -> uuid_pkg.UUID:
+        if not project:
+            return self.project_id
+
+        if is_valid_uuid(project):
+            return project
+
+        result = self.client.get(f"projects/{organisation_id}", ep_params={"q": project})
+        project = Project(**result.data[0])
+        return project.id
 
     def login(self) -> None:
         pass
 
     def logout(self) -> None:
         pass
+
+
+def get_api_client(profile: str) -> Timon:
+    return Timon(profile)

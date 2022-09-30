@@ -5,14 +5,10 @@ profiles:
     api_url: http://api.timon.osism.tech/api/
     api_version: v1
     insecure: False
-    project_name:
-    # project_id:
     auth:
-      # user_id:
-      username:
-      # organisation_id:
-      organisation_name:
+      organisation:
+      project:
+      user:
       password:
-      # token_name:
-      # token_id:
+      # token:
       # token_secret:

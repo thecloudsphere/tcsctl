@@ -45,3 +45,34 @@ class EnvironmentBase(BaseModel):
 
 class Environment(TimonBaseModel, EnvironmentBase):
     pass
+
+
+# organisation
+
+class OrganisationBase(BaseModel):
+    pass
+
+
+class Organisation(TimonBaseModel, OrganisationBase):
+    pass
+
+
+# project
+
+class ProjectBase(BaseModel):
+    pass
+
+
+class Project(TimonBaseModel, ProjectBase):
+    pass
+
+
+# template
+
+class TemplateBase(BaseModel):
+    name: Optional[str]
+    inputs: Optional[str]
+
+
+class Template(TimonBaseModel, TemplateBase):
+    pass
