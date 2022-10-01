@@ -103,9 +103,16 @@ class TemplateBase(BaseModel):
     blueprint_version: Optional[str]
     environment_id: Optional[str]
     environment_version: Optional[str]
-    inputs: Optional[str]
     name: Optional[str]
 
 
+class TemplateWithInputsBase(TemplateBase):
+    inputs: Optional[str]
+
+
 class Template(TimonBaseModel, TemplateBase):
+    pass
+
+
+class TemplateWithInputs(TimonBaseModel, TemplateWithInputsBase):
     pass

@@ -278,11 +278,11 @@ class Timon:
         result = self.client.delete(f"templates/{project_id}/{template_id}")
         return result
 
-    def get_template(self, template: str, project: str) -> Template:
+    def get_template(self, template: str, project: str) -> TemplateWithInputs:
         project_id = self.get_project_id(project)
         template_id = self.get_template_id(template, project_id)
         result = self.client.get(f"templates/{project_id}/{template_id}")
-        template = Template(**result.data)
+        template = TemplateWithInputs(**result.data)
         return template
 
     def get_templates(self, project: str) -> Template:
@@ -291,7 +291,7 @@ class Timon:
         templates = [Template(**template) for template in result.data]
         return templates
 
-    def import_template(self, path: str, name: str, project: str) -> uuid_pkg.UUID:
+    def import_template(self, path: str, name: str, project: str) -> Template:
         project_id = self.get_project_id(project)
 
         with open(path) as fp:
@@ -334,7 +334,7 @@ class Timon:
                     with open(v["path"]) as fp:
                         v = fp.read()
                         inputs[k] = v
-        template = TemplateBase(
+        template = TemplateWithInputsBase(
             blueprint_id=str(blueprint_id),
             blueprint_version=blueprint_version,
             environment_id=str(environment_id),
