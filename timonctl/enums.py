@@ -1,13 +1,16 @@
-import enum
+from enum import unique, Enum
 
 
-class DeploymentAction(enum.Enum):
-    create = "create"
-    destroy = "destroy"
-    reconcile = "reconcile"
+@unique
+class DeploymentAction(str, Enum):
+    create = "CREATE"
+    destroy = "DESTROY"
+    none = "NONE"
+    reconcile = "RECONCILE"
 
 
-class Visibility(enum.Enum):
+@unique
+class Visibility(str, Enum):
     community = "COMMUNITY"
     private = "PRIVATE"
     public = "PUBLIC"

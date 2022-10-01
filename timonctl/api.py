@@ -9,7 +9,7 @@ import uuid as uuid_pkg
 import requests
 import yaml
 
-from . import logger, settings
+from . import enums, logger, settings
 from .common import is_valid_uuid
 from .exceptions import TimonException, TimonApiException
 from .models import *
@@ -150,7 +150,6 @@ class Timon:
         project_id = self.get_project_id(project)
         template_id = self.get_template_id(template)
         deployment = DeploymentBase(
-            action="create",
             name=name,
             template_id=str(template_id)
         )

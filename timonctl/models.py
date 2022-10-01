@@ -4,6 +4,8 @@ import uuid as uuid_pkg
 
 from pydantic import BaseModel, Json
 
+from .enums import DeploymentAction
+
 
 class Result(BaseModel):
     status_code: int
@@ -40,11 +42,10 @@ class Blueprint(TimonBaseModel, BlueprintBase):
 class DeploymentBase(BaseModel):
     name: Optional[str]
     template_id: Optional[str]
-    action: Optional[str] = None
 
 
 class Deployment(TimonBaseModel, DeploymentBase):
-    pass
+    action: Optional[DeploymentAction] = DeploymentAction.none
 
 
 # environment
