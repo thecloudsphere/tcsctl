@@ -252,6 +252,13 @@ class Timon:
         result = self.client.delete(f"templates/{project_id}/{template_id}")
         return result
 
+    def get_template(self, template: str, project: str) -> Template:
+        project_id = self.get_project_id(project)
+        template_id = self.get_template_id(template, project_id)
+        result = self.client.get(f"templates/{project_id}/{template_id}")
+        template = Template(**result.data)
+        return template
+
     def get_templates(self, project: str) -> Template:
         project_id = self.get_project_id(project)
         result = self.client.get(f"templates/{project_id}")

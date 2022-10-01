@@ -13,7 +13,7 @@ app = typer.Typer()
 def import_blueprint(ctx: typer.Context, name: str, repository: str = "timontech/registry", repository_server="https://github.com", project: str = typer.Option(default=None)):
     try:
         blueprint = ctx.obj.client.import_blueprint(name, repository, "blueprints", repository_server, project)
-        print(blueprint)
+        print(tabulate(blueprint, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
@@ -31,7 +31,7 @@ def list_blueprints(ctx: typer.Context, project: str = typer.Option(default=None
 def show_blueprint(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
     try:
         blueprint = ctx.obj.client.get_blueprint(name, project)
-        print(blueprint)
+        print(tabulate(blueprint, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 

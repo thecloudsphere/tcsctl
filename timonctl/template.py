@@ -13,7 +13,7 @@ app = typer.Typer()
 def import_template(ctx: typer.Context, path: str, name: str, project: str = typer.Option(default=None)):
     try:
         template = ctx.obj.client.import_template(path, name, project)
-        print(template)
+        print(tabulate(template, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
@@ -28,8 +28,12 @@ def list_templates(ctx: typer.Context, project: str = typer.Option(default=None)
 
 
 @app.command("show")
-def show_template(ctx: typer.Context):
-    logger.info("STUB: show_template")
+def show_template(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
+    try:
+        template = ctx.obj.client.get_template(name, project)
+        print(tabulate(template, headers=["Field", "Value"], tablefmt="psql"))
+    except TimonApiException as e:
+        logger.error(str(e))
 
 
 @app.command("edit")

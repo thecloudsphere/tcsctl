@@ -37,7 +37,12 @@ def destroy_deployment(ctx: typer.Context, name: str, project: str = typer.Optio
 
 @app.command("show")
 def show_deployment(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
-    logger.info("STUB: show_deployment")
+    try:
+        deployment = ctx.obj.client.get_deployment(name, project)
+        # print(tabulate([x.dict().values() for x in deployments], headers=Deployment.get_field_names(), tablefmt="psql"))
+        print(deployment)
+    except TimonApiException as e:
+        logger.error(str(e))
 
 
 @app.command("edit")

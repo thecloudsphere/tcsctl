@@ -12,7 +12,7 @@ app = typer.Typer()
 def import_environment(ctx: typer.Context, name: str, repository: str = "timontech/registry", repository_server="https://github.com", project: str = typer.Option(default=None)):
     try:
         environment = ctx.obj.client.import_environment(name, repository, "environments", repository_server, project)
-        print(environment)
+        print(tabulate(environment, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
@@ -30,7 +30,7 @@ def list_environment(ctx: typer.Context, project: str = typer.Option(default=Non
 def show_environment(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
     try:
         environment = ctx.obj.client.get_environment(name, project)
-        print(environment)
+        print(tabulate(environment, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
