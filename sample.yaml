@@ -1,10 +1,32 @@
 ---
-sample:
-  environment: terraform/base
+# timonctl environment import terraform/base
+# timonctl environment import terraform/openstack
+# timonctl blueprint import terraform/openstack/minimal
+# timonctl template import sample.yaml terraform-sample
+# timonctl deployment create terraform terraform-sample
+terraform-sample:
+  environment: terraform/openstack
   blueprint: terraform/openstack/minimal
   blueprint_version: main
   inputs:
-    prefix: sample
+    prefix: terraform
+    clouds.yaml:
+      type: file
+      path: clouds.yaml
+    "cloud name": openstack
+    flavor: "SCS-1V:1:10"
+    "public network": public
+
+# timonctl environment import ansible/base
+# timonctl blueprint import ansible/openstack/minimal
+# timonctl template import sample.yaml ansible-sample
+# timonctl deployment create ansible ansible-sample
+ansible-sample:
+  environment: ansible/base
+  blueprint: ansible/openstack/minimal
+  blueprint_version: main
+  inputs:
+    prefix: ansible
     clouds.yaml:
       type: file
       path: clouds.yaml
