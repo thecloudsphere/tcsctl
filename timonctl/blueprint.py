@@ -10,7 +10,7 @@ app = typer.Typer()
 
 
 @app.command("import")
-def import_blueprint(ctx: typer.Context, name: str, repository: str = "timontech/blueprints", repository_server="https://github.com", project: str = typer.Option(default=None)):
+def import_blueprint(ctx: typer.Context, name: str, repository: str = "timontech/registry", repository_server="https://github.com", project: str = typer.Option(default=None)):
     try:
         blueprint = ctx.obj.client.import_blueprint(name, repository, repository_server, project)
         print(blueprint)

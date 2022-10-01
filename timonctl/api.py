@@ -9,7 +9,7 @@ import uuid as uuid_pkg
 import requests
 import yaml
 
-from . import enums, logger, settings
+from . import logger, settings
 from .common import is_valid_uuid
 from .exceptions import TimonException, TimonApiException
 from .models import *
