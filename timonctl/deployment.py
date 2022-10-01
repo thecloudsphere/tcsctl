@@ -35,6 +35,15 @@ def destroy_deployment(ctx: typer.Context, name: str, project: str = typer.Optio
         logger.error(str(e))
 
 
+@app.command("reconcile")
+def reconcile_deployment(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
+    try:
+        result = ctx.obj.client.reconcile_deployment(name, project)
+        print(result)
+    except TimonApiException as e:
+        logger.error(str(e))
+
+
 @app.command("show")
 def show_deployment(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
     try:

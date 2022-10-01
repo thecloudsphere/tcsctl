@@ -164,6 +164,12 @@ class Timon:
         result = self.client.post(f"deployments/{project_id}/{deployment_id}/destroy")
         return result
 
+    def reconcile_deployment(self, name: str, project: str) -> Result:
+        project_id = self.get_project_id(project)
+        deployment_id = self.get_deployment_id(name)
+        result = self.client.post(f"deployments/{project_id}/{deployment_id}/reconcile")
+        return result
+
     def get_deployment_id(self, deployment: str, project: str = None) -> uuid_pkg.UUID:
         if is_valid_uuid(deployment):
             return deployment
