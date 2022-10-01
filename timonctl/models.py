@@ -4,7 +4,7 @@ import uuid as uuid_pkg
 
 from pydantic import BaseModel, Json
 
-from .enums import DeploymentAction
+from .enums import DeploymentAction, DeploymentStatus
 
 
 class Result(BaseModel):
@@ -46,6 +46,7 @@ class DeploymentBase(BaseModel):
 
 class Deployment(TimonBaseModel, DeploymentBase):
     action: Optional[DeploymentAction] = DeploymentAction.none
+    status: Optional[DeploymentStatus] = DeploymentStatus.none
 
 
 # environment

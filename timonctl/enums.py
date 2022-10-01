@@ -10,6 +10,21 @@ class DeploymentAction(str, Enum):
 
 
 @unique
+class DeploymentStatus(str, Enum):
+    check = "CHECK"
+    create = "CREATE"
+    created = "CREATED"
+    destroy = "DESTROY"
+    destroyed = "DESTROYED"
+    error = "ERROR"
+    initialize = "INITIALIZE"
+    none = "NONE"
+    reconcile = "RECONCILE"
+    reconciled = "RECONCILED"
+    validate = "VALIDATE"
+
+
+@unique
 class Visibility(str, Enum):
     community = "COMMUNITY"
     private = "PRIVATE"
