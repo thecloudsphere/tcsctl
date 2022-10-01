@@ -30,6 +30,7 @@ class TimonBaseModel(BaseModel):
 class BlueprintBase(BaseModel):
     name: Optional[str]
     repository: Optional[str]
+    repository_path: Optional[str]
     repository_server: Optional[str]
 
 
@@ -54,6 +55,7 @@ class Deployment(TimonBaseModel, DeploymentBase):
 class EnvironmentBase(BaseModel):
     name: Optional[str]
     repository: Optional[str]
+    repository_path: Optional[str]
     repository_server: Optional[str]
 
 

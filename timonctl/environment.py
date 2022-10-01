@@ -11,7 +11,7 @@ app = typer.Typer()
 @app.command("import")
 def import_environment(ctx: typer.Context, name: str, repository: str = "timontech/registry", repository_server="https://github.com", project: str = typer.Option(default=None)):
     try:
-        environment = ctx.obj.client.import_environment(name, repository, repository_server, project)
+        environment = ctx.obj.client.import_environment(name, repository, "environments", repository_server, project)
         print(environment)
     except TimonApiException as e:
         logger.error(str(e))

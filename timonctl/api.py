@@ -133,10 +133,11 @@ class Timon:
         blueprints = [Blueprint(**blueprint) for blueprint in result.data]
         return blueprints
 
-    def import_blueprint(self, name: str, repository: str, repository_server: str, project: str) -> uuid_pkg.UUID:
+    def import_blueprint(self, name: str, repository: str, repository_path: str, repository_server: str, project: str) -> uuid_pkg.UUID:
         project_id = self.get_project_id(project)
         blueprint = BlueprintBase(
             repository=repository,
+            repository_path=repository_path,
             repository_server=repository_server,
             name=name
         )
@@ -221,10 +222,11 @@ class Timon:
         environments = [Environment(**environment) for environment in result.data]
         return environments
 
-    def import_environment(self, name: str, repository: str, repository_server: str, project: str) -> uuid_pkg.UUID:
+    def import_environment(self, name: str, repository: str, repository_path: str, repository_server: str, project: str) -> uuid_pkg.UUID:
         project_id = self.get_project_id(project)
         environment = EnvironmentBase(
             repository=repository,
+            repository_path=repository_path,
             repository_server=repository_server,
             name=name
         )
