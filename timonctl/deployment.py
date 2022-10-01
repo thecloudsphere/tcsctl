@@ -20,8 +20,8 @@ def list_deployment(ctx: typer.Context, project: str = typer.Option(default=None
 @app.command("create")
 def create_deployment(ctx: typer.Context, name: str, template: str, project: str = typer.Option(default=None)):
     try:
-        result = ctx.obj.client.create_deployment(name, template, project)
-        print(result)
+        deployment = ctx.obj.client.create_deployment(name, template, project)
+        print(tabulate(deployment, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
@@ -39,8 +39,7 @@ def destroy_deployment(ctx: typer.Context, name: str, project: str = typer.Optio
 def show_deployment(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
     try:
         deployment = ctx.obj.client.get_deployment(name, project)
-        # print(tabulate([x.dict().values() for x in deployments], headers=Deployment.get_field_names(), tablefmt="psql"))
-        print(deployment)
+        print(tabulate(deployment, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
