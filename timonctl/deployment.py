@@ -61,3 +61,28 @@ def delete_deployment(ctx: typer.Context, name: str, project: str = typer.Option
         print(result)
     except TimonApiException as e:
         logger.error(str(e))
+
+
+@app.command("outputs")
+def get_deployment_outputs(ctx: typer.Context, name: str, output: str = typer.Argument(default=None), project: str = typer.Option(default=None)):
+    try:
+        outputs = ctx.obj.client.get_deployment_outputs(name, output, project)
+        if output:
+            print(outputs[output])
+        else:
+            print(outputs)
+    except TimonApiException as e:
+        logger.error(str(e))
+
+
+@app.command("logs")
+def get_deployment_logs(ctx: typer.Context, name: str, log_id: str = typer.Argument(default=None), project: str = typer.Option(default=None)):
+    try:
+        if log_id:
+            log = ctx.obj.client.get_deployment_log(name, log_id, project)
+            print(log.value)
+        else:
+            logs = ctx.obj.client.get_deployment_logs(name, project)
+            print(tabulate([x.dict().values() for x in logs], headers=Log.get_field_names(), tablefmt="psql"))
+    except TimonApiException as e:
+        logger.error(str(e))

@@ -63,6 +63,20 @@ class Environment(TimonBaseModel, EnvironmentBase):
     pass
 
 
+# log
+
+class LogBase(BaseModel):
+    category: Optional[str]
+
+
+class Log(TimonBaseModel, LogBase):
+    pass
+
+
+class LogWithValue(Log):
+    value: Optional[str]
+
+
 # organisation
 
 class OrganisationBase(BaseModel):

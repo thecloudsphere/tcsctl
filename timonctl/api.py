@@ -2,7 +2,7 @@
 # - https://www.pretzellogix.net/2021/12/08/how-to-write-a-python3-sdk-library-module-for-a-json-rest-api/
 # - https://github.com/PretzelLogix/py-cat-api
 
-from typing import Dict
+from typing import Dict, List
 from urllib.parse import urljoin
 import uuid as uuid_pkg
 
@@ -186,11 +186,31 @@ class Timon:
         deployment = Deployment(**result.data)
         return deployment
 
-    def get_deployments(self, project: str) -> Deployment:
+    def get_deployments(self, project: str) -> List[Deployment]:
         project_id = self.get_project_id(project)
         result = self.client.get(f"deployments/{project_id}")
         deployments = [Deployment(**deployment) for deployment in result.data]
         return deployments
+
+    def get_deployment_outputs(self, deployment: str, output: str, project: str) -> Dict:
+        project_id = self.get_project_id(project)
+        deployment_id = self.get_deployment_id(deployment, project_id)
+        result = self.client.get(f"deployments/{project_id}/{deployment_id}/outputs")
+        return result.data
+
+    def get_deployment_log(self, deployment: str, log_id: uuid_pkg.UUID, project: str) -> LogWithValue:
+        project_id = self.get_project_id(project)
+        deployment_id = self.get_deployment_id(deployment, project_id)
+        result = self.client.get(f"logs/{deployment_id}/{log_id}")
+        log = LogWithValue(**result.data)
+        return log
+
+    def get_deployment_logs(self, deployment: str, project: str) -> List[Log]:
+        project_id = self.get_project_id(project)
+        deployment_id = self.get_deployment_id(deployment, project_id)
+        result = self.client.get(f"logs/{deployment_id}")
+        logs = [Log(**log) for log in result.data]
+        return logs
 
     # environments
 
