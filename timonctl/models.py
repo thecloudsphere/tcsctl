@@ -17,7 +17,6 @@ class Result(BaseModel):
 class TimonBaseModel(BaseModel):
     id: uuid_pkg.UUID
     created_at: datetime
-    updated_at: datetime
 
     # https://python.tutorialink.com/short-way-to-get-all-field-names-of-a-pydantic-class/
     @classmethod
