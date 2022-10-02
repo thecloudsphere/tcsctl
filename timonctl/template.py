@@ -10,27 +10,27 @@ app = typer.Typer()
 
 
 @app.command("import")
-def import_template(ctx: typer.Context, path: str, name: str, project: str = typer.Option(default=None)):
+def import_template(ctx: typer.Context, path: str, name: str):
     try:
-        template = ctx.obj.client.import_template(path, name, project)
+        template = ctx.obj.client.import_template(path, name, ctx.obj.project_id)
         print(tabulate(template, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
 
 @app.command("list")
-def list_templates(ctx: typer.Context, project: str = typer.Option(default=None)):
+def list_templates(ctx: typer.Context):
     try:
-        templates = ctx.obj.client.get_templates(project)
+        templates = ctx.obj.client.get_templates(ctx.obj.project_id)
         print(tabulate([x.dict().values() for x in templates], headers=Template.get_field_names(), tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
 
 @app.command("show")
-def show_template(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
+def show_template(ctx: typer.Context, name: str):
     try:
-        template = ctx.obj.client.get_template(name, project)
+        template = ctx.obj.client.get_template(name, ctx.obj.project_id)
         print(tabulate(template, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
@@ -47,9 +47,9 @@ def update_template(ctx: typer.Context, name: str):
 
 
 @app.command("delete")
-def delete_template(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
+def delete_template(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.delete_template(name, project)
+        result = ctx.obj.client.delete_template(name, ctx.obj.project_id)
         print(result)
     except TimonApiException as e:
         logger.error(str(e))

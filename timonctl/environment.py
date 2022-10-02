@@ -9,27 +9,27 @@ app = typer.Typer()
 
 
 @app.command("import")
-def import_environment(ctx: typer.Context, name: str, repository: str = "timontech/registry", repository_server="https://github.com", project: str = typer.Option(default=None)):
+def import_environment(ctx: typer.Context, name: str, repository: str = "timontech/registry", repository_server="https://github.com"):
     try:
-        environment = ctx.obj.client.import_environment(name, repository, "environments", repository_server, project)
+        environment = ctx.obj.client.import_environment(name, repository, "environments", repository_server, ctx.obj.project_id)
         print(tabulate(environment, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
 
 @app.command("list")
-def list_environment(ctx: typer.Context, project: str = typer.Option(default=None)):
+def list_environment(ctx: typer.Context):
     try:
-        environments = ctx.obj.client.get_environments(project)
+        environments = ctx.obj.client.get_environments(ctx.obj.project_id)
         print(tabulate([x.dict().values() for x in environments], headers=Environment.get_field_names(), tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
 
 @app.command("show")
-def show_environment(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
+def show_environment(ctx: typer.Context, name: str):
     try:
-        environment = ctx.obj.client.get_environment(name, project)
+        environment = ctx.obj.client.get_environment(name, ctx.obj.project_id)
         print(tabulate(environment, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
@@ -46,9 +46,9 @@ def update_environment(name: str):
 
 
 @app.command("delete")
-def delete_environment(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
+def delete_environment(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.delete_environment(name, project)
+        result = ctx.obj.client.delete_environment(name, ctx.obj.project_id)
         print(result)
     except TimonApiException as e:
         logger.error(str(e))

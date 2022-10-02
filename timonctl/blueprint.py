@@ -10,27 +10,27 @@ app = typer.Typer()
 
 
 @app.command("import")
-def import_blueprint(ctx: typer.Context, name: str, repository: str = "timontech/registry", repository_server="https://github.com", project: str = typer.Option(default=None)):
+def import_blueprint(ctx: typer.Context, name: str, repository: str = "timontech/registry", repository_server="https://github.com"):
     try:
-        blueprint = ctx.obj.client.import_blueprint(name, repository, "blueprints", repository_server, project)
+        blueprint = ctx.obj.client.import_blueprint(name, repository, "blueprints", repository_server, ctx.obj.project_id)
         print(tabulate(blueprint, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
 
 @app.command("list")
-def list_blueprints(ctx: typer.Context, project: str = typer.Option(default=None)):
+def list_blueprints(ctx: typer.Context):
     try:
-        blueprints = ctx.obj.client.get_blueprints(project)
+        blueprints = ctx.obj.client.get_blueprints(ctx.obj.project_id)
         print(tabulate([x.dict().values() for x in blueprints], headers=Blueprint.get_field_names(), tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
 
 @app.command("show")
-def show_blueprint(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
+def show_blueprint(ctx: typer.Context, name: str):
     try:
-        blueprint = ctx.obj.client.get_blueprint(name, project)
+        blueprint = ctx.obj.client.get_blueprint(name, ctx.obj.project_id)
         print(tabulate(blueprint, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
@@ -47,9 +47,9 @@ def update_blueprint(ctx: typer.Context, name: str):
 
 
 @app.command("delete")
-def delete_blueprint(ctx: typer.Context, name: str, project: str = typer.Option(default=None)):
+def delete_blueprint(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.delete_blueprint(name, project)
+        result = ctx.obj.client.delete_blueprint(name, ctx.obj.project_id)
         print(result)
     except TimonApiException as e:
         logger.error(str(e))
