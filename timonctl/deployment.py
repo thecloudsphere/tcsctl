@@ -2,6 +2,7 @@ from tabulate import tabulate
 import typer
 
 from . import logger
+from .common import is_valid_uuid
 from .exceptions import TimonApiException
 from .models import *
 
@@ -85,13 +86,19 @@ def get_deployment_outputs(ctx: typer.Context, name: str, output: str = typer.Ar
 
 
 @app.command("logs")
-def get_deployment_logs(ctx: typer.Context, name: str, log_id: str = typer.Argument(default=None)):
+def get_deployment_logs(ctx: typer.Context, name: str, log_filter: str = typer.Argument(default="1 hour ago"), show: bool = typer.Option(default=False)):
     try:
-        if log_id:
-            log = ctx.obj.client.get_deployment_log(name, log_id, ctx.obj.project_id)
+        if is_valid_uuid(log_filter):
+            log = ctx.obj.client.get_deployment_log(name, log_filter, ctx.obj.project_id)
             print(log.value)
         else:
-            logs = ctx.obj.client.get_deployment_logs(name, ctx.obj.project_id)
-            print(tabulate([x.dict().values() for x in logs], headers=Log.get_field_names(), tablefmt="psql"))
+            logs = ctx.obj.client.get_deployment_logs(name, ctx.obj.project_id, log_filter)
+            if show:
+                for log in logs:
+                    log_with_value = ctx.obj.client.get_deployment_log(name, log.id, ctx.obj.project_id)
+                    print()
+                    print(log_with_value.value)
+            else:
+                print(tabulate([x.dict().values() for x in logs], headers=Log.get_field_names(), tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))

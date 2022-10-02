@@ -224,10 +224,10 @@ class Timon:
         log = LogWithValue(**result.data)
         return log
 
-    def get_deployment_logs(self, deployment: str, project: str) -> List[Log]:
+    def get_deployment_logs(self, deployment: str, project: str, log_filter: str = None) -> List[Log]:
         project_id = self.get_project_id(self.organisation_id, project)
         deployment_id = self.get_deployment_id(deployment, project_id)
-        result = self.client.get(f"logs/{deployment_id}")
+        result = self.client.get(f"logs/{deployment_id}", ep_params={"q": log_filter})
         logs = [Log(**log) for log in result.data]
         return logs
 
