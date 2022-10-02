@@ -19,11 +19,24 @@ class Client:
     def __init__(self, profile: str = 'default'):
         self.profile = settings.profiles.get(profile)
         self.api_url = urljoin(self.profile.api_url, f"{self.profile.api_version}/")
+        self.headers = {}
 
         logger.debug(f"profile = {self.profile}")
         logger.debug(f"api_url = {self.api_url}")
 
-    def _do(self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None, headers: Dict = {}) -> Result:
+        login_data = {
+            "organisation": self.profile.auth.organisation,
+            "password": self.profile.auth.password,
+            "project": self.profile.auth.project,
+            "username": self.profile.auth.username
+        }
+        result = self.post("auth/tokens", data=login_data)
+        token = Token(**result.data)
+        self.headers = {
+            "Authorization": f"Bearer {token.access_token}"
+        }
+
+    def _do(self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
         url = urljoin(str(self.api_url), endpoint)
 
         log_line_pre = f"method={http_method}, url={url}, params={ep_params}"
@@ -33,7 +46,7 @@ class Client:
         try:
             logger.debug(log_line_pre)
             response = requests.request(method=http_method, url=url, verify=self.profile.insecure,
-                                        headers=headers, params=ep_params, json=data)
+                                        headers=self.headers, params=ep_params, json=data)
         except requests.exceptions.RequestException as e:
             logger.error(str(e))
             raise TimonApiException("Request failed") from e
@@ -398,8 +411,17 @@ class Timon:
         project = Project(**result.data[0])
         return project.id
 
-    def login(self) -> None:
-        pass
+    def login(self) -> Token:
+        login_data = {
+            "organisation": self.profile.auth.organisation,
+            "password": self.profile.auth.password,
+            "project": self.profile.auth.project,
+            "username": self.profile.auth.username
+        }
+        result = self.client.post("auth/tokens", data=login_data)
+
+        token = Token(**result.data)
+        return token
 
     def logout(self) -> None:
         pass

@@ -116,3 +116,10 @@ class Template(TimonBaseModel, TemplateBase):
 
 class TemplateWithInputs(TimonBaseModel, TemplateWithInputsBase):
     pass
+
+
+# other
+
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str

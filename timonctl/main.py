@@ -1,5 +1,6 @@
 from types import SimpleNamespace
 
+from tabulate import tabulate
 import typer
 
 from . import logger
@@ -19,7 +20,8 @@ app.add_typer(app_template, name="template")
 
 @app.command()
 def login(ctx: typer.Context):
-    logger.info(f"STUB: login with {ctx.obj.profile}")
+    token = ctx.obj.client.login()
+    print(tabulate(token, headers=["Field", "Value"], tablefmt="psql"))
 
 
 @app.command()
