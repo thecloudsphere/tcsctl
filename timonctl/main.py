@@ -8,6 +8,7 @@ from .api import get_api_client
 from .blueprint import app as app_blueprint
 from .deployment import app as app_deployment
 from .environment import app as app_environment
+from .project import app as app_project
 from .template import app as app_template
 
 
@@ -15,6 +16,7 @@ app = typer.Typer()
 app.add_typer(app_blueprint, name="blueprint")
 app.add_typer(app_deployment, name="deployment")
 app.add_typer(app_environment, name="environment")
+app.add_typer(app_project, name="project")
 app.add_typer(app_template, name="template")
 
 
@@ -37,7 +39,7 @@ def entrypoint(ctx: typer.Context,
 
     ctx.obj = SimpleNamespace(
         client=client,
-        organisationd_id=client.organisation_id,
+        organisation_id=client.organisation_id,
         profile=profile,
         project_id=client.project_id
     )

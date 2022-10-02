@@ -122,32 +122,32 @@ class Timon:
         if is_valid_uuid(blueprint):
             return blueprint
 
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         result = self.client.get(f"blueprints/{project_id}", ep_params={"q": blueprint})
         blueprint = Blueprint(**result.data[0])
         return blueprint.id
 
     def delete_blueprint(self, blueprint: str, project: str = None) -> Result:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         blueprint_id = self.get_blueprint_id(blueprint, project_id)
         result = self.client.delete(f"blueprints/{project_id}/{blueprint_id}")
         return result
 
     def get_blueprint(self, blueprint: str, project: str) -> Blueprint:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         blueprint_id = self.get_blueprint_id(blueprint, project_id)
         result = self.client.get(f"blueprints/{project_id}/{blueprint_id}")
         blueprint = Blueprint(**result.data)
         return blueprint
 
     def get_blueprints(self, project: str) -> Blueprint:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         result = self.client.get(f"blueprints/{project_id}")
         blueprints = [Blueprint(**blueprint) for blueprint in result.data]
         return blueprints
 
     def import_blueprint(self, name: str, repository: str, repository_path: str, repository_server: str, project: str) -> uuid_pkg.UUID:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         blueprint = BlueprintBase(
             repository=repository,
             repository_path=repository_path,
@@ -161,7 +161,7 @@ class Timon:
     # deployments
 
     def create_deployment(self, name: str, template: str, project: str) -> Result:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         template_id = self.get_template_id(template)
         deployment = DeploymentBase(
             name=name,
@@ -172,13 +172,13 @@ class Timon:
         return deployment
 
     def destroy_deployment(self, name: str, project: str) -> Result:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         deployment_id = self.get_deployment_id(name)
         result = self.client.post(f"deployments/{project_id}/{deployment_id}/destroy")
         return result
 
     def reconcile_deployment(self, name: str, project: str) -> Result:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         deployment_id = self.get_deployment_id(name)
         result = self.client.post(f"deployments/{project_id}/{deployment_id}/reconcile")
         return result
@@ -187,45 +187,45 @@ class Timon:
         if is_valid_uuid(deployment):
             return deployment
 
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         result = self.client.get(f"deployments/{project_id}", ep_params={"q": deployment})
         deployment = Deployment(**result.data[0])
         return deployment.id
 
     def delete_deployment(self, deployment: str, project: str) -> Result:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         deployment_id = self.get_deployment_id(deployment, project_id)
         result = self.client.delete(f"deployments/{project_id}/{deployment_id}")
         return result
 
     def get_deployment(self, deployment: str, project: str) -> Deployment:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         deployment_id = self.get_deployment_id(deployment, project_id)
         result = self.client.get(f"deployments/{project_id}/{deployment_id}")
         deployment = Deployment(**result.data)
         return deployment
 
     def get_deployments(self, project: str) -> List[Deployment]:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         result = self.client.get(f"deployments/{project_id}")
         deployments = [Deployment(**deployment) for deployment in result.data]
         return deployments
 
     def get_deployment_outputs(self, deployment: str, output: str, project: str) -> Dict:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         deployment_id = self.get_deployment_id(deployment, project_id)
         result = self.client.get(f"deployments/{project_id}/{deployment_id}/outputs")
         return result.data
 
     def get_deployment_log(self, deployment: str, log_id: uuid_pkg.UUID, project: str) -> LogWithValue:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         deployment_id = self.get_deployment_id(deployment, project_id)
         result = self.client.get(f"logs/{deployment_id}/{log_id}")
         log = LogWithValue(**result.data)
         return log
 
     def get_deployment_logs(self, deployment: str, project: str) -> List[Log]:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         deployment_id = self.get_deployment_id(deployment, project_id)
         result = self.client.get(f"logs/{deployment_id}")
         logs = [Log(**log) for log in result.data]
@@ -237,32 +237,32 @@ class Timon:
         if is_valid_uuid(environment):
             return environment
 
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         result = self.client.get(f"environments/{project_id}", ep_params={"q": environment})
         environment = Environment(**result.data[0])
         return environment.id
 
     def delete_environment(self, environment: str, project: str) -> Result:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         environment_id = self.get_environment_id(environment, project_id)
         result = self.client.delete(f"environments/{project_id}/{environment_id}")
         return result
 
     def get_environment(self, environment: str, project: str) -> Environment:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         environment_id = self.get_environment_id(environment, project_id)
         result = self.client.get(f"environments/{project_id}/{environment_id}")
         environment = Environment(**result.data)
         return environment
 
     def get_environments(self, project: str) -> Environment:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         result = self.client.get(f"environments/{project_id}")
         environments = [Environment(**environment) for environment in result.data]
         return environments
 
     def import_environment(self, name: str, repository: str, repository_path: str, repository_server: str, project: str) -> uuid_pkg.UUID:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         environment = EnvironmentBase(
             repository=repository,
             repository_path=repository_path,
@@ -279,33 +279,33 @@ class Timon:
         if is_valid_uuid(template):
             return template
 
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
 
         result = self.client.get(f"templates/{project_id}", ep_params={"q": template})
         template = Template(**result.data[0])
         return template.id
 
     def delete_template(self, template: str, project: str) -> Result:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         template_id = self.get_template_id(template, project_id)
         result = self.client.delete(f"templates/{project_id}/{template_id}")
         return result
 
     def get_template(self, template: str, project: str) -> TemplateWithInputs:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         template_id = self.get_template_id(template, project_id)
         result = self.client.get(f"templates/{project_id}/{template_id}")
         template = TemplateWithInputs(**result.data)
         return template
 
     def get_templates(self, project: str) -> Template:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
         result = self.client.get(f"templates/{project_id}")
         templates = [Template(**template) for template in result.data]
         return templates
 
     def import_template(self, path: str, name: str, project: str) -> Template:
-        project_id = self.get_project_id(project)
+        project_id = self.get_project_id(self.organisation_id, project)
 
         with open(path) as fp:
             data = yaml.safe_load(fp)
@@ -387,6 +387,47 @@ class Timon:
         template = Template(**result.data)
         return template
 
+    # projects
+
+    def get_project_id(self, organisation_id, project: str = None) -> uuid_pkg.UUID:
+        if not project:
+            return self.project_id
+
+        if is_valid_uuid(project):
+            return project
+
+        result = self.client.get(f"projects/{organisation_id}", ep_params={"q": project})
+        project = Project(**result.data[0])
+        return project.id
+
+    def create_project(self, project: str, organisation: str) -> Project:
+        organisation_id = self.get_organisation_id(organisation)
+        project_data = {
+            "name": project
+        }
+        result = self.client.post(f"projects/{organisation_id}", data=project_data)
+        project = Project(**result.data)
+        return project
+
+    def delete_project(self, project: str, organisation: str) -> Result:
+        project_id = self.get_project_id(self.organisation_id, project)
+        organisation_id = self.get_organisation_id(organisation)
+        result = self.client.delete(f"projects/{organisation_id}/{project_id}")
+        return result
+
+    def get_project(self, project: str, organisation: str) -> Project:
+        project_id = self.get_project_id(self.organisation_id, project)
+        organisation_id = self.get_organisation_id(organisation)
+        result = self.client.get(f"projects/{organisation_id}/{project_id}")
+        project = Project(**result.data)
+        return project
+
+    def get_projects(self, organisation: str) -> List[Project]:
+        organisation_id = self.get_organisation_id(organisation)
+        result = self.client.get(f"projects/{organisation_id}")
+        projects = [Project(**project) for project in result.data]
+        return projects
+
     # other
 
     def get_organisation_id(self, organisation: str = None) -> uuid_pkg.UUID:
@@ -400,16 +441,7 @@ class Timon:
         organisation = Organisation(**result.data[0])
         return organisation.id
 
-    def get_project_id(self, organisation_id, project: str = None) -> uuid_pkg.UUID:
-        if not project:
-            return self.project_id
-
-        if is_valid_uuid(project):
-            return project
-
-        result = self.client.get(f"projects/{organisation_id}", ep_params={"q": project})
-        project = Project(**result.data[0])
-        return project.id
+    # auth
 
     def login(self) -> Token:
         login_data = {

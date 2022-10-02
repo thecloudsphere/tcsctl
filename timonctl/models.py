@@ -89,7 +89,7 @@ class Organisation(TimonBaseModel, OrganisationBase):
 # project
 
 class ProjectBase(BaseModel):
-    pass
+    name: Optional[str]
 
 
 class Project(TimonBaseModel, ProjectBase):
