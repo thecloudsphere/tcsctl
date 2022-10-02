@@ -308,7 +308,21 @@ class Timon:
             environment_version = None
 
         if "environment" in template_data:
-            environment_id = self.get_environment_id(template_data["environment"])
+            if type(template_data["environment"]) == dict:
+                try:
+                    environment_data = template_data["environment"]
+                    environment_id = self.get_environment_id(environment_data["name"])
+                except TimonApiException:
+                    environment = self.import_environment(
+                        environment_data["name"],
+                        environment_data["repository"],
+                        "environments",
+                        environment_data["repository_server"],
+                        project_id
+                    )
+                    environment_id = environment.id
+            else:
+                environment_id = self.get_environment_id(template_data["environment"])
         else:
             environment_id = None
 
@@ -318,7 +332,21 @@ class Timon:
             blueprint_version = None
 
         if "blueprint" in template_data:
-            blueprint_id = self.get_blueprint_id(template_data["blueprint"])
+            if type(template_data["blueprint"]) == dict:
+                try:
+                    blueprint_data = template_data["blueprint"]
+                    blueprint_id = self.get_blueprint_id(blueprint_data["name"])
+                except TimonApiException:
+                    blueprint = self.import_blueprint(
+                        blueprint_data["name"],
+                        blueprint_data["repository"],
+                        "blueprints",
+                        blueprint_data["repository_server"],
+                        project_id
+                    )
+                    blueprint_id = blueprint.id
+            else:
+                blueprint_id = self.get_blueprint_id(template_data["blueprint"])
         else:
             blueprint_id = None
 

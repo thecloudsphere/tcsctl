@@ -1,12 +1,15 @@
 ---
-# timonctl environment import terraform/base
-# timonctl environment import terraform/openstack
-# timonctl blueprint import terraform/openstack/minimal
 # timonctl template import sample.yaml terraform-sample
 # timonctl deployment create terraform terraform-sample
 terraform-sample:
-  environment: terraform/openstack
-  blueprint: terraform/openstack/minimal
+  environment:
+    name: terraform/openstack
+    repository: timontech/registry
+    repository_server: https://github.com
+  blueprint:
+    name: terraform/openstack/minimal
+    repository: timontech/registry
+    repository_server: https://github.com
   blueprint_version: main
   inputs:
     prefix: terraform
