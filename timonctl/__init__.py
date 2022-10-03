@@ -1,7 +1,7 @@
 import sys
 
 from dynaconf import Dynaconf, Validator
-from loguru import logger  # noqa F401
+from loguru import logger
 
 settings = Dynaconf(
     envvar_prefix="TIMON",
