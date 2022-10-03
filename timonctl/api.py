@@ -6,6 +6,7 @@ from typing import Dict, List
 from urllib.parse import urljoin
 import uuid as uuid_pkg
 
+import jwt
 import requests
 import yaml
 
@@ -32,8 +33,13 @@ class Client:
         }
         result = self.post("auth/tokens", data=login_data)
         token = Token(**result.data)
+        encoded_token = jwt.encode(
+            token.dict(),
+            settings.jwt_secret,
+            algorithm=settings.jwt_algorithm
+        )
         self.headers = {
-            "Authorization": f"Bearer {token.access_token}"
+            "Authorization": f"Bearer {encoded_token}"
         }
 
     def _do(self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:

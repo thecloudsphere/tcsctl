@@ -122,4 +122,7 @@ class TemplateWithInputs(TimonBaseModel, TemplateWithInputsBase):
 
 class Token(BaseModel):
     access_token: str
+    organisation_id: str
+    project_id: str
     refresh_token: str
+    user_id: str
