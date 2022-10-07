@@ -1,7 +1,10 @@
+__all__ = ['__version__']
+
 import sys
 
 from dynaconf import Dynaconf, Validator
 from loguru import logger
+import pbr.version
 
 settings = Dynaconf(
     envvar_prefix="TIMON",
@@ -16,3 +19,11 @@ settings.validators.validate_all()
 
 logger.remove()
 logger.add(sys.stderr, level=settings.log_level)
+
+version_info = pbr.version.VersionInfo('timonctl')
+# We have a circular import problem when we first run python setup.py sdist
+# It's harmless, so deflect it.
+try:
+    __version__ = version_info.version_string()
+except AttributeError:
+    __version__ = None
