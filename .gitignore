@@ -1,5 +1,7 @@
 *.egg-info
 *.pyc
+AUTHORS
+ChangeLog
 __pycache__
 build
 dist
