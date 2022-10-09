@@ -2,6 +2,7 @@
 # - https://www.pretzellogix.net/2021/12/08/how-to-write-a-python3-sdk-library-module-for-a-json-rest-api/
 # - https://github.com/PretzelLogix/py-cat-api
 
+from datetime import datetime
 from getpass import getpass
 from typing import Dict, List
 from urllib.parse import urljoin
@@ -18,7 +19,7 @@ from .models import *
 
 
 class Client:
-    def __init__(self, profile: DynaBox, token: str = None):
+    def __init__(self, profile: DynaBox, token: Token = None):
         self.token = token
         self.profile = profile
         self.api_url = urljoin(self.profile.api_url, f"{self.profile.api_version}/")
@@ -28,16 +29,21 @@ class Client:
         logger.debug(f"api_url = {self.api_url}")
 
         if token:
-            # refresh token
-            logger.debug(f"Refreshing token for {self.profile.name}")
-            login_data = {
-                "organisation": token.organisation_id,
-                "project": token.project_id,
-                "refresh_token": token.refresh_token
-            }
-            result = self.post("auth/tokens", data=login_data)
-            self.token = Token(**result.data)
-            write_token_to_file(self.profile.name, self.token)
+            # refresh token expired
+            if datetime.now().timestamp() - token.issue_timestamp > token.refresh_expires_in:
+                raise TimonApiException("Refresh token expired, please log in again")
+
+            # refresh of token required
+            elif datetime.now().timestamp() - token.issue_timestamp > token.expires_in:
+                logger.debug(f"Token refresh required, Refreshing token for {self.profile.name}")
+                login_data = {
+                    "organisation": token.organisation_id,
+                    "project": token.project_id,
+                    "refresh_token": token.refresh_token
+                }
+                result = self.post("auth/tokens", data=login_data)
+                self.token = Token(**result.data)
+                write_token_to_file(self.profile.name, self.token)
 
             # set authorization header
             encoded_token = encode_token(self.token)

@@ -122,7 +122,10 @@ class TemplateWithInputs(TimonBaseModel, TemplateWithInputsBase):
 
 class Token(BaseModel):
     access_token: str
+    expires_in: int
+    issue_timestamp: int
     organisation_id: str
     project_id: str
+    refresh_expires_in: int
     refresh_token: str
     user_id: str
