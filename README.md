@@ -60,6 +60,11 @@ terraform-sample:
     "public network": public
 ```
 
+This example uses a ``clouds.yaml`` file, which is located in the same directory
+as the ``sample.yaml`` file. The content of this file depends very much on the
+OpenStack environment used. Refer to the documentation of the operator of the
+OpenStack environment accordingly.
+
 Import the template ``terraform-sample`` defined in the previously created
 ``sample.yaml`` file.
 
