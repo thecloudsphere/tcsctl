@@ -28,7 +28,19 @@ class Client:
         logger.debug(f"api_url = {self.api_url}")
 
         if token:
-            encoded_token = encode_token(token)
+            # refresh token
+            logger.debug(f"Refreshing token for {self.profile.name}")
+            login_data = {
+                "organisation": token.organisation_id,
+                "project": token.project_id,
+                "refresh_token": token.refresh_token
+            }
+            result = self.post("auth/tokens", data=login_data)
+            self.token = Token(**result.data)
+            write_token_to_file(self.profile.name, self.token)
+
+            # set authorization header
+            encoded_token = encode_token(self.token)
             self.headers = {
                 "Authorization": f"Bearer {encoded_token}"
             }
