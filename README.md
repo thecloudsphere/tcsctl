@@ -11,6 +11,31 @@ as self-service.
 
 Install the CLI for Timon with ``pip3 install timonctl``.
 
+Create the file ``timon.yaml`` which contains the details of the API and
+the authentication details.
+
+```
+# log_level: DEBUG
+profiles:
+  default:
+    api_url: https://timon.osism.tech/api/
+    api_version: v1
+    insecure: false
+    auth:
+      organisation: Sample
+      project: Sample
+      username: sample
+      # password: password
+```
+
+Before you can use the CLI, you have to log in.
+
+```
+timonctl login
+Password:
+Logged in successfully.
+```
+
 Create the file ``sample.yaml`` which contains a sample template for a
 deployment with Terraform on an OpenStack environment.
 

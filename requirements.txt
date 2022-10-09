@@ -1,6 +1,7 @@
 # pbr should be first
 pbr==5.10.0
 
+appdirs==1.4.4
 certifi==2022.9.24
 charset-normalizer==2.1.1
 click==8.1.3

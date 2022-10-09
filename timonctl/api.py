@@ -2,29 +2,41 @@
 # - https://www.pretzellogix.net/2021/12/08/how-to-write-a-python3-sdk-library-module-for-a-json-rest-api/
 # - https://github.com/PretzelLogix/py-cat-api
 
+from getpass import getpass
 from typing import Dict, List
 from urllib.parse import urljoin
 import uuid as uuid_pkg
 
-import jwt
+from dynaconf.utils.boxing import DynaBox
 import requests
 import yaml
 
-from . import logger, settings
-from .common import is_valid_uuid
+from . import logger
+from .common import encode_token, get_token_from_file, is_valid_uuid, write_token_to_file
 from .exceptions import TimonException, TimonApiException
 from .models import *
 
 
 class Client:
-    def __init__(self, profile: str = 'default'):
-        self.profile = settings.profiles.get(profile)
+    def __init__(self, profile: DynaBox, token: str = None):
+        self.token = token
+        self.profile = profile
         self.api_url = urljoin(self.profile.api_url, f"{self.profile.api_version}/")
         self.headers = {}
 
-        logger.debug(f"profile = {self.profile}")
+        logger.debug(f"profile = {self.profile.name}")
         logger.debug(f"api_url = {self.api_url}")
 
+        if token:
+            encoded_token = encode_token(token)
+            self.headers = {
+                "Authorization": f"Bearer {encoded_token}"
+            }
+
+    def login(self) -> Token:
+        password = self.profile.auth.get("password")
+        if not password:
+            self.profile.auth.password = getpass()
         login_data = {
             "organisation": self.profile.auth.organisation,
             "password": self.profile.auth.password,
@@ -32,15 +44,10 @@ class Client:
             "username": self.profile.auth.username
         }
         result = self.post("auth/tokens", data=login_data)
-        token = Token(**result.data)
-        encoded_token = jwt.encode(
-            token.dict(),
-            settings.jwt_secret,
-            algorithm=settings.jwt_algorithm
-        )
-        self.headers = {
-            "Authorization": f"Bearer {encoded_token}"
-        }
+
+        self.token = Token(**result.data)
+        write_token_to_file(self.profile.name, self.token)
+        return self.token
 
     def _do(self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
         url = urljoin(str(self.api_url), endpoint)
@@ -100,24 +107,32 @@ class Client:
 
 
 class Timon:
-    def __init__(self, profile: str = 'default'):
-        self.profile = settings.profiles.get(profile)
-        self.client = Client(profile=profile)
+    def __init__(self, profile: DynaBox):
+        self.profile = profile
+        token = get_token_from_file(profile.name)
+        if not token:
+            logger.error("Log in first")
+            raise TimonApiException("Log in first")
+
+        self.client = Client(profile=profile, token=token)
 
         if not self.profile.insecure:
             requests.packages.urllib3.disable_warnings()
 
-        organisation = settings.profiles.get(profile).auth.organisation
-        if is_valid_uuid(organisation):
-            self.organisation_id = organisation
-        else:
-            self.organisation_id = self.get_organisation_id(organisation)
+        # organisation = profile.auth.organisation
+        # if is_valid_uuid(organisation):
+        #     self.organisation_id = organisation
+        # else:
+        #     self.organisation_id = self.get_organisation_id(organisation)
 
-        project = settings.profiles.get(profile).auth.project
-        if is_valid_uuid(project):
-            self.project_id = project
-        else:
-            self.project_id = self.get_project_id(self.organisation_id, project)
+        # project = profile.auth.project
+        # if is_valid_uuid(project):
+        #     self.project_id = project
+        # else:
+        #     self.project_id = self.get_project_id(self.organisation_id, project)
+
+        self.organisation_id = token.organisation_id
+        self.project_id = token.project_id
 
         logger.debug(f"organisation = {self.organisation_id}")
         logger.debug(f"project = {self.project_id}")
@@ -447,23 +462,10 @@ class Timon:
         organisation = Organisation(**result.data[0])
         return organisation.id
 
-    # auth
 
-    def login(self) -> Token:
-        login_data = {
-            "organisation": self.profile.auth.organisation,
-            "password": self.profile.auth.password,
-            "project": self.profile.auth.project,
-            "username": self.profile.auth.username
-        }
-        result = self.client.post("auth/tokens", data=login_data)
-
-        token = Token(**result.data)
-        return token
-
-    def logout(self) -> None:
-        pass
-
-
-def get_api_client(profile: str) -> Timon:
+def get_client(profile: DynaBox) -> Timon:
     return Timon(profile)
+
+
+def get_http_client(profile: DynaBox) -> Client:
+    return Client(profile)
