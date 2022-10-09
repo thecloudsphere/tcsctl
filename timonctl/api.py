@@ -14,7 +14,12 @@ import yaml
 
 from . import logger
 from .common import encode_token, get_token_from_file, is_valid_uuid, write_token_to_file
-from .exceptions import TimonException, TimonApiException
+from .exceptions import (
+    TimonApiException,
+    TimonException,
+    TimonLoginRequiredException,
+    TimonTokenExpiredException
+)
 from .models import *
 
 
@@ -31,7 +36,7 @@ class Client:
         if token:
             # refresh token expired
             if datetime.now().timestamp() - token.issue_timestamp > token.refresh_expires_in:
-                raise TimonApiException(f"Refresh token for {self.profile.name} expired, please log in again")
+                raise TimonTokenExpiredException(f"Refresh token for {self.profile.name}")
 
             # refresh of token required
             elif datetime.now().timestamp() - token.issue_timestamp > token.expires_in:
@@ -129,8 +134,7 @@ class Timon:
         self.profile = profile
         token = get_token_from_file(profile.name)
         if not token:
-            logger.error("Log in first")
-            raise TimonApiException("Log in first")
+            raise TimonLoginRequiredException
 
         self.client = Client(profile=profile, token=token)
 

@@ -1,18 +1,21 @@
 from getpass import getpass
-import os
 import sys
 from types import SimpleNamespace
 
 from tabulate import tabulate
 import typer
 
-from . import logger, settings, user_config_dir
+from . import logger, settings
 from .api import get_client, get_http_client
 from .blueprint import app as app_blueprint
-from .common import get_token_from_file
+from .common import get_token_from_file, remove_token_file
 from .deployment import app as app_deployment
 from .environment import app as app_environment
-from .exceptions import TimonApiException
+from .exceptions import (
+    TimonApiException,
+    TimonLoginRequiredException,
+    TimonTokenExpiredException
+)
 from .project import app as app_project
 from .template import app as app_template
 
@@ -42,7 +45,7 @@ def login(ctx: typer.Context, force: bool = typer.Option(False, "--force"), prom
             ctx.obj.profile.auth.password = getpass()
 
         client = get_http_client(ctx.obj.profile)
-        logger.debug(f"Requesting new token for {ctx.obj.profile.name}")
+        logger.debug(f"Requesting token for {ctx.obj.profile.name}")
         token = client.login()
         print("Logged in successfully.")
     else:
@@ -54,10 +57,8 @@ def login(ctx: typer.Context, force: bool = typer.Option(False, "--force"), prom
 
 @app.command()
 def logout(ctx: typer.Context):
-    path = os.path.join(user_config_dir(), f"{ctx.obj.profile.name}.json")
-    logger.debug(f"Removing token for {ctx.obj.profile.name}: {path}")
     try:
-        os.remove(path)
+        remove_token_file(ctx.obj.profile.name)
         print("Logged out successfully.")
     except FileNotFoundError:
         print("Already logged out.")
@@ -73,6 +74,13 @@ def entrypoint(ctx: typer.Context,
     if ctx.invoked_subcommand not in ["login", "logout"]:
         try:
             client = get_client(ns_profile)
+        except TimonTokenExpiredException:
+            print(f"New log in required. Token for {profile} expired")
+            remove_token_file(profile)
+            sys.exit(1)
+        except TimonLoginRequiredException:
+            print(f"Log in required. No valid token for {profile} found.")
+            sys.exit(1)
         except TimonApiException as e:
             logger.error(str(e))
             sys.exit(1)

@@ -4,3 +4,11 @@ class TimonApiException(Exception):
 
 class TimonException(Exception):
     pass
+
+
+class TimonTokenExpiredException(Exception):
+    pass
+
+
+class TimonLoginRequiredException(Exception):
+    pass

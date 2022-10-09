@@ -31,6 +31,16 @@ def get_token_from_file(profile: str):
     return token
 
 
+def remove_token_file(profile: str):
+    path = os.path.join(user_config_dir(), f"{profile}.json")
+    logger.debug(f"Removing token file for {profile}: {path}")
+
+    try:
+        os.remove(path)
+    except FileNotFoundError as e:
+        raise e
+
+
 def write_token_to_file(profile: str, token: Token):
     path = os.path.join(user_config_dir(), f"{profile}.json")
     logger.debug(f"Writing token for {profile}: {path}")
