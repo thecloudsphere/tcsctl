@@ -41,8 +41,8 @@ def edit_environment(name: str):
 
 
 @app.command("update")
-def update_environment(name: str):
-    logger.info("STUB: update_environment")
+def update_environment(ctx: typer.Context, name: str):
+    ctx.obj.client.update_environment(name, ctx.obj.project_id)
 
 
 @app.command("delete")

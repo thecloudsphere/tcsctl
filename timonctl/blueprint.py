@@ -43,7 +43,7 @@ def edit_blueprint(ctx: typer.Context, name: str):
 
 @app.command("update")
 def update_blueprint(ctx: typer.Context, name: str):
-    logger.info("STUB: update_blueprint")
+    ctx.obj.client.update_blueprint(name, ctx.obj.project_id)
 
 
 @app.command("delete")
