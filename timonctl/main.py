@@ -1,5 +1,6 @@
 from getpass import getpass
 import os
+import sys
 from types import SimpleNamespace
 
 from tabulate import tabulate
@@ -11,6 +12,7 @@ from .blueprint import app as app_blueprint
 from .common import get_token_from_file
 from .deployment import app as app_deployment
 from .environment import app as app_environment
+from .exceptions import TimonApiException
 from .project import app as app_project
 from .template import app as app_template
 
@@ -69,7 +71,11 @@ def entrypoint(ctx: typer.Context,
     ns_profile.name = profile
 
     if ctx.invoked_subcommand not in ["login", "logout"]:
-        client = get_client(ns_profile)
+        try:
+            client = get_client(ns_profile)
+        except TimonApiException as e:
+            logger.error(str(e))
+            sys.exit(1)
 
         ctx.obj = SimpleNamespace(
             client=client,
