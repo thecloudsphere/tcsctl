@@ -194,7 +194,13 @@ class Timon:
         blueprint_id = self.get_blueprint_id(blueprint, project_id)
         self.client.post(f"blueprints/{project_id}/{blueprint_id}/update")
 
-    def import_blueprint(self, name: str, repository: str, repository_path: str, repository_server: str, project: str) -> uuid_pkg.UUID:
+    def import_blueprint(self,
+                         name: str,
+                         repository: str,
+                         repository_path: str,
+                         repository_server: str,
+                         repository_key: str,
+                         project: str) -> uuid_pkg.UUID:
         project_id = self.get_project_id(self.organisation_id, project)
         blueprint = BlueprintBase(
             repository=repository,
@@ -202,7 +208,10 @@ class Timon:
             repository_server=repository_server,
             name=name
         )
-        result = self.client.post(f"blueprints/{project_id}", data=blueprint.dict())
+        data = blueprint.dict()
+        if repository_key:
+            data["repository_key"] = repository_key
+        result = self.client.post(f"blueprints/{project_id}", data=data)
         blueprint = Blueprint(**result.data)
         return blueprint
 
@@ -314,7 +323,13 @@ class Timon:
         environment_id = self.get_environment_id(environment, project_id)
         self.client.post(f"environments/{project_id}/{environment_id}/update")
 
-    def import_environment(self, name: str, repository: str, repository_path: str, repository_server: str, project: str) -> uuid_pkg.UUID:
+    def import_environment(self,
+                           name: str,
+                           repository: str,
+                           repository_path: str,
+                           repository_server: str,
+                           repository_key: str,
+                           project: str) -> uuid_pkg.UUID:
         project_id = self.get_project_id(self.organisation_id, project)
         environment = EnvironmentBase(
             repository=repository,
@@ -322,7 +337,10 @@ class Timon:
             repository_server=repository_server,
             name=name
         )
-        result = self.client.post(f"environments/{project_id}", data=environment.dict())
+        data = environment.dict()
+        if repository_key:
+            data["repository_key"] = repository_key
+        result = self.client.post(f"environments/{project_id}", data=data)
         environment = Environment(**result.data)
         return environment
 
@@ -379,12 +397,20 @@ class Timon:
                     environment_data = template_data["environment"]
                     environment_id = self.get_environment_id(environment_data["name"])
                 except TimonApiException:
+                    repository_key = None
+                    if "repository_key" in environment_data:
+                        repository_key = environment_data["repository_key"]
+                        if type(repository_key) == dict:
+                            if repository_key["type"] == "file":
+                                with open(v["path"]) as fp:
+                                    repository_key = fp.read()
                     environment = self.import_environment(
                         environment_data["name"],
                         environment_data["repository"],
                         "environments",
                         environment_data["repository_server"],
-                        project_id
+                        repository_key,
+                        project=project_id
                     )
                     environment_id = environment.id
             else:
@@ -403,12 +429,20 @@ class Timon:
                     blueprint_data = template_data["blueprint"]
                     blueprint_id = self.get_blueprint_id(blueprint_data["name"])
                 except TimonApiException:
+                    repository_key = None
+                    if "repository_key" in blueprint_data:
+                        repository_key = blueprint_data["repository_key"]
+                        if type(repository_key) == dict:
+                            if repository_key["type"] == "file":
+                                with open(v["path"]) as fp:
+                                    repository_key = fp.read()
                     blueprint = self.import_blueprint(
                         blueprint_data["name"],
                         blueprint_data["repository"],
                         "blueprints",
                         blueprint_data["repository_server"],
-                        project_id
+                        repository_key,
+                        project=project_id
                     )
                     blueprint_id = blueprint.id
             else:
