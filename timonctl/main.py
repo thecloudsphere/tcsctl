@@ -6,7 +6,7 @@ from tabulate import tabulate
 import typer
 
 from . import logger, settings
-from .api import get_client, get_http_client
+from .client import get_client, get_http_client
 from .blueprint import app as app_blueprint
 from .common import get_token_from_file, remove_token_file
 from .deployment import app as app_deployment
