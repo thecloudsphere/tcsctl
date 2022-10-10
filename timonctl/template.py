@@ -2,7 +2,7 @@ from tabulate import tabulate
 import typer
 
 from . import logger
-from .exceptions import TimonApiException
+from .exceptions import TimonApiException, TimonException
 from .models import *
 
 
@@ -16,6 +16,8 @@ def import_template(ctx: typer.Context, path: str, name: str):
         print(tabulate(template, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
+    except TimonException as e:
+        print(str(e))
 
 
 @app.command("list")

@@ -1,0 +1,16 @@
+---
+log_level: enum('INFO', 'DEBUG', required=False)
+profiles: map(str(), include('profile'))
+
+---
+profile:
+  api_url: str()
+  api_version: enum('v1')
+  insecure: bool(required=False)
+  auth: include('auth')
+
+auth:
+  organisation: str()
+  project: str()
+  username: str()
+  password: str(required=False)

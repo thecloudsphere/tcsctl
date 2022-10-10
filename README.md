@@ -31,6 +31,13 @@ profiles:
       # password: password
 ```
 
+To be sure, check that the configuration is valid.
+
+```
+timonctl validate config timon.yaml
+Config timon.yaml is valid.
+```
+
 Before you can use the CLI, you have to log in.
 
 ```
@@ -61,6 +68,13 @@ terraform-sample:
     "cloud name": openstack
     flavor: "SCS-1V:1:10"
     "public network": public
+```
+
+To be sure, check that the template is valid.
+
+```
+timonctl validate template sample.yaml
+Template sample.yaml is valid.
 ```
 
 This example uses a ``clouds.yaml`` file, which is located in the same directory

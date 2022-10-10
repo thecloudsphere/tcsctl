@@ -21,6 +21,7 @@ from .exceptions import (
     TimonTokenExpiredException
 )
 from .models import *
+from .schemas import validate_content
 
 
 class Client:
@@ -377,6 +378,13 @@ class Timon:
 
     def import_template(self, path: str, name: str, project: str) -> Template:
         project_id = self.get_project_id(self.organisation_id, project)
+
+        logger.debug(f"Validating template {path}")
+        try:
+            with open(path) as fp:
+                validate_content(fp.read(), "template")
+        except Exception as e:
+            raise TimonException(f"Template {path} is not valid:\n{e}")
 
         with open(path) as fp:
             data = yaml.safe_load(fp)

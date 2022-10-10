@@ -17,6 +17,7 @@ from .exceptions import (
     TimonTokenExpiredException
 )
 from .project import app as app_project
+from .schemas import validate_content
 from .template import app as app_template
 
 
@@ -64,14 +65,36 @@ def logout(ctx: typer.Context):
         print("Already logged out.")
 
 
+@app.command()
+def validate(schema: str, path: str):
+    logger.debug(f"Validating {schema} {path}")
+    try:
+        with open(path) as fp:
+            validate_content(fp.read(), schema)
+        print(f"{schema.title()} {path} is valid.")
+    except Exception as e:
+        print(f"{schema.title()} {path} is not valid:\n{e}")
+        sys.exit(1)
+
+
 @app.callback()
 def entrypoint(ctx: typer.Context,
                profile: str = typer.Option("default", envvar="TIMON_PROFILE")):
 
+    if ctx.invoked_subcommand == "validate":
+        return
+
+    try:
+        with open("timon.yaml") as fp:
+            validate_content(fp.read(), "config")
+    except Exception as e:
+        print(str(e))
+        sys.exit(1)
+
     ns_profile = settings.profiles.get(profile)
     ns_profile.name = profile
 
-    if ctx.invoked_subcommand not in ["login", "logout"]:
+    if ctx.invoked_subcommand not in ["login", "logout", "validate"]:
         try:
             client = get_client(ns_profile)
         except TimonTokenExpiredException:

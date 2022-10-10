@@ -1,0 +1,43 @@
+---
+blueprint:
+  author: str()
+  repository_server: str()
+  repository: str()
+  name: str()
+  description: str(multiline=True)
+  schedule: str(required=False)
+  environment: include('environment')
+  versions: list(include('version'), min=1)
+  inputs: list(include('input'))
+  outputs: list(include('output'))
+
+---
+version:
+  version: str()
+
+input:
+  name: str()
+  destination: any(str(), include('destination'))
+  default: str(required=False)
+  required: bool()
+  description: str(multiline=True)
+  visibility: enum('private', required=False)
+
+output:
+  name: str()
+  source: any(str(), include('source'))
+  description: str(multiline=True)
+  visibility: enum('private', required=False)
+
+destination:
+  type: enum('environment', 'file')
+  path: str(required=False)
+
+source:
+  type: str()
+  path: str()
+
+environment:
+  repository: str()
+  name: str()
+  version: str()

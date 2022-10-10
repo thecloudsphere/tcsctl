@@ -1,0 +1,27 @@
+---
+map(str(), include('template'))
+
+---
+template:
+  blueprint: any(str(), include('blueprint'))
+  blueprint_version: str()
+  environment: any(str(), include('environment'))
+  inputs: map(str(), include('input'))
+
+input: any(str(), include('extented_input'))
+
+extented_input:
+  type: enum('file')
+  path: str(required=False)
+
+blueprint:
+  name: str()
+  repository: str(required=False)
+  repository_key: str(required=False, multiline=True)
+  repository_server: str(required=False)
+
+environment:
+  name: str()
+  repository: str(required=False)
+  repository_key: str(required=False, multiline=True)
+  repository_server: str(required=False)
