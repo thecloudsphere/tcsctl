@@ -45,7 +45,7 @@ def edit_environment(name: str):
 
 
 @app.command("update")
-def update_environment(name: str):
+def update_environment(ctx: typer.Context, name: str):
     ctx.obj.client.update_environment(name, ctx.obj.project_id)
 
 
