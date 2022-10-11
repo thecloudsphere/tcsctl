@@ -41,3 +41,15 @@ environment:
   repository: str()
   name: str()
   version: str()
+  overrides: include('environment_overrides', required=False)
+
+environment_overrides:
+  blueprint_source: str(required=False)
+  blueprint_source_key: str(required=False)
+  blueprint_version: str(required=False)
+  working_directory: str(required=False)
+  outputs_directory: str(required=False)
+  makefile: str(required=False)
+  makefile_pre_processing: str(required=False)
+  makefile_processing: str(required=False)
+  makefile_post_processing: str(required=False)
