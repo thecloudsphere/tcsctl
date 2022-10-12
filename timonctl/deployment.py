@@ -13,7 +13,13 @@ app = typer.Typer()
 def list_deployment(ctx: typer.Context):
     try:
         deployments = ctx.obj.client.get_deployments(ctx.obj.project_id)
-        print(tabulate([x.dict().values() for x in deployments], headers=Deployment.get_field_names(), tablefmt="psql"))
+        print(
+            tabulate(
+                [x.dict().values() for x in deployments],
+                headers=Deployment.get_field_names(),
+                tablefmt="psql",
+            )
+        )
     except TimonApiException as e:
         logger.error(str(e))
 
@@ -21,7 +27,9 @@ def list_deployment(ctx: typer.Context):
 @app.command("create")
 def create_deployment(ctx: typer.Context, name: str, template: str):
     try:
-        deployment = ctx.obj.client.create_deployment(name, template, ctx.obj.project_id)
+        deployment = ctx.obj.client.create_deployment(
+            name, template, ctx.obj.project_id
+        )
         print(tabulate(deployment, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
@@ -74,9 +82,13 @@ def delete_deployment(ctx: typer.Context, name: str):
 
 
 @app.command("outputs")
-def get_deployment_outputs(ctx: typer.Context, name: str, output: str = typer.Argument(default=None)):
+def get_deployment_outputs(
+    ctx: typer.Context, name: str, output: str = typer.Argument(default=None)
+):
     try:
-        outputs = ctx.obj.client.get_deployment_outputs(name, output, ctx.obj.project_id)
+        outputs = ctx.obj.client.get_deployment_outputs(
+            name, output, ctx.obj.project_id
+        )
         if output:
             print(outputs[output])
         else:
@@ -86,19 +98,36 @@ def get_deployment_outputs(ctx: typer.Context, name: str, output: str = typer.Ar
 
 
 @app.command("logs")
-def get_deployment_logs(ctx: typer.Context, name: str, log_filter: str = typer.Argument(default="1 hour ago"), show: bool = typer.Option(default=False)):
+def get_deployment_logs(
+    ctx: typer.Context,
+    name: str,
+    log_filter: str = typer.Argument(default="1 hour ago"),
+    show: bool = typer.Option(default=False),
+):
     try:
         if is_valid_uuid(log_filter):
-            log = ctx.obj.client.get_deployment_log(name, log_filter, ctx.obj.project_id)
+            log = ctx.obj.client.get_deployment_log(
+                name, log_filter, ctx.obj.project_id
+            )
             print(log.value)
         else:
-            logs = ctx.obj.client.get_deployment_logs(name, ctx.obj.project_id, log_filter)
+            logs = ctx.obj.client.get_deployment_logs(
+                name, ctx.obj.project_id, log_filter
+            )
             if show:
                 for log in logs:
-                    log_with_value = ctx.obj.client.get_deployment_log(name, log.id, ctx.obj.project_id)
+                    log_with_value = ctx.obj.client.get_deployment_log(
+                        name, log.id, ctx.obj.project_id
+                    )
                     print()
                     print(log_with_value.value)
             else:
-                print(tabulate([x.dict().values() for x in logs], headers=Log.get_field_names(), tablefmt="psql"))
+                print(
+                    tabulate(
+                        [x.dict().values() for x in logs],
+                        headers=Log.get_field_names(),
+                        tablefmt="psql",
+                    )
+                )
     except TimonApiException as e:
         logger.error(str(e))

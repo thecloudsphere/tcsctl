@@ -10,13 +10,22 @@ app = typer.Typer()
 
 
 @app.command("import")
-def import_blueprint(ctx: typer.Context,
-                     name: str,
-                     repository: str = "timontech/registry",
-                     repository_server: str = "https://github.com",
-                     repository_key: str = None):
+def import_blueprint(
+    ctx: typer.Context,
+    name: str,
+    repository: str = "timontech/registry",
+    repository_server: str = "https://github.com",
+    repository_key: str = None,
+):
     try:
-        blueprint = ctx.obj.client.import_blueprint(name, repository, "blueprints", repository_server, repository_key, ctx.obj.project_id)
+        blueprint = ctx.obj.client.import_blueprint(
+            name,
+            repository,
+            "blueprints",
+            repository_server,
+            repository_key,
+            ctx.obj.project_id,
+        )
         print(tabulate(blueprint, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
@@ -26,7 +35,13 @@ def import_blueprint(ctx: typer.Context,
 def list_blueprints(ctx: typer.Context):
     try:
         blueprints = ctx.obj.client.get_blueprints(ctx.obj.project_id)
-        print(tabulate([x.dict().values() for x in blueprints], headers=Blueprint.get_field_names(), tablefmt="psql"))
+        print(
+            tabulate(
+                [x.dict().values() for x in blueprints],
+                headers=Blueprint.get_field_names(),
+                tablefmt="psql",
+            )
+        )
     except TimonApiException as e:
         logger.error(str(e))
 

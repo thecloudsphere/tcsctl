@@ -9,13 +9,22 @@ app = typer.Typer()
 
 
 @app.command("import")
-def import_environment(ctx: typer.Context,
-                       name: str,
-                       repository: str = "timontech/registry",
-                       repository_server: str = "https://github.com",
-                       repository_key: str = None):
+def import_environment(
+    ctx: typer.Context,
+    name: str,
+    repository: str = "timontech/registry",
+    repository_server: str = "https://github.com",
+    repository_key: str = None,
+):
     try:
-        environment = ctx.obj.client.import_environment(name, repository, "environments", repository_server, repository_key, ctx.obj.project_id)
+        environment = ctx.obj.client.import_environment(
+            name,
+            repository,
+            "environments",
+            repository_server,
+            repository_key,
+            ctx.obj.project_id,
+        )
         print(tabulate(environment, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
@@ -25,7 +34,13 @@ def import_environment(ctx: typer.Context,
 def list_environment(ctx: typer.Context):
     try:
         environments = ctx.obj.client.get_environments(ctx.obj.project_id)
-        print(tabulate([x.dict().values() for x in environments], headers=Environment.get_field_names(), tablefmt="psql"))
+        print(
+            tabulate(
+                [x.dict().values() for x in environments],
+                headers=Environment.get_field_names(),
+                tablefmt="psql",
+            )
+        )
     except TimonApiException as e:
         logger.error(str(e))
 

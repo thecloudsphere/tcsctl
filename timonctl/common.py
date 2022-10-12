@@ -50,7 +50,5 @@ def write_token_to_file(profile: str, token: Token):
 
 def encode_token(token: Token) -> str:
     return jwt.encode(
-        token.dict(),
-        settings.jwt_secret,
-        algorithm=settings.jwt_algorithm
+        token.dict(), settings.jwt_secret, algorithm=settings.jwt_algorithm
     )

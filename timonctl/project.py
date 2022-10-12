@@ -12,7 +12,13 @@ app = typer.Typer()
 def list_project(ctx: typer.Context):
     try:
         projects = ctx.obj.client.get_projects(ctx.obj.organisation_id)
-        print(tabulate([x.dict().values() for x in projects], headers=Project.get_field_names(), tablefmt="psql"))
+        print(
+            tabulate(
+                [x.dict().values() for x in projects],
+                headers=Project.get_field_names(),
+                tablefmt="psql",
+            )
+        )
     except TimonApiException as e:
         logger.error(str(e))
 

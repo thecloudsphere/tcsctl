@@ -26,6 +26,7 @@ class TimonBaseModel(BaseModel):
 
 # blueprint
 
+
 class BlueprintBase(BaseModel):
     name: Optional[str]
     repository: Optional[str]
@@ -39,6 +40,7 @@ class Blueprint(TimonBaseModel, BlueprintBase):
 
 # deployment
 
+
 class DeploymentBase(BaseModel):
     name: Optional[str]
     template_id: Optional[str]
@@ -50,6 +52,7 @@ class Deployment(TimonBaseModel, DeploymentBase):
 
 
 # environment
+
 
 class EnvironmentBase(BaseModel):
     name: Optional[str]
@@ -63,6 +66,7 @@ class Environment(TimonBaseModel, EnvironmentBase):
 
 
 # log
+
 
 class LogBase(BaseModel):
     category: Optional[str]
@@ -78,6 +82,7 @@ class LogWithValue(Log):
 
 # organisation
 
+
 class OrganisationBase(BaseModel):
     pass
 
@@ -88,6 +93,7 @@ class Organisation(TimonBaseModel, OrganisationBase):
 
 # project
 
+
 class ProjectBase(BaseModel):
     name: Optional[str]
 
@@ -97,6 +103,7 @@ class Project(TimonBaseModel, ProjectBase):
 
 
 # template
+
 
 class TemplateBase(BaseModel):
     blueprint_id: Optional[str]
@@ -119,6 +126,7 @@ class TemplateWithInputs(TimonBaseModel, TemplateWithInputsBase):
 
 
 # other
+
 
 class Token(BaseModel):
     access_token: str

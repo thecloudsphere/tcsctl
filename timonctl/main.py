@@ -14,7 +14,7 @@ from .environment import app as app_environment
 from .exceptions import (
     TimonApiException,
     TimonLoginRequiredException,
-    TimonTokenExpiredException
+    TimonTokenExpiredException,
 )
 from .project import app as app_project
 from .schemas import validate_content
@@ -30,7 +30,12 @@ app.add_typer(app_template, name="template")
 
 
 @app.command()
-def login(ctx: typer.Context, force: bool = typer.Option(False, "--force"), prompt: bool = typer.Option(False, "--prompt"), show: bool = typer.Option(False, "--show")):
+def login(
+    ctx: typer.Context,
+    force: bool = typer.Option(False, "--force"),
+    prompt: bool = typer.Option(False, "--prompt"),
+    show: bool = typer.Option(False, "--show"),
+):
     token = None
 
     if not force:
@@ -78,8 +83,9 @@ def validate(schema: str, path: str):
 
 
 @app.callback()
-def entrypoint(ctx: typer.Context,
-               profile: str = typer.Option("default", envvar="TIMON_PROFILE")):
+def entrypoint(
+    ctx: typer.Context, profile: str = typer.Option("default", envvar="TIMON_PROFILE")
+):
 
     if ctx.invoked_subcommand == "validate":
         return
@@ -112,12 +118,10 @@ def entrypoint(ctx: typer.Context,
             client=client,
             organisation_id=client.organisation_id,
             profile=ns_profile,
-            project_id=client.project_id
+            project_id=client.project_id,
         )
     else:
-        ctx.obj = SimpleNamespace(
-            profile=ns_profile
-        )
+        ctx.obj = SimpleNamespace(profile=ns_profile)
 
 
 # NOTE: this intermediate step is required to be able to add common

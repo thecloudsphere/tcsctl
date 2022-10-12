@@ -24,7 +24,13 @@ def import_template(ctx: typer.Context, path: str, name: str):
 def list_templates(ctx: typer.Context):
     try:
         templates = ctx.obj.client.get_templates(ctx.obj.project_id)
-        print(tabulate([x.dict().values() for x in templates], headers=Template.get_field_names(), tablefmt="psql"))
+        print(
+            tabulate(
+                [x.dict().values() for x in templates],
+                headers=Template.get_field_names(),
+                tablefmt="psql",
+            )
+        )
     except TimonApiException as e:
         logger.error(str(e))
 
