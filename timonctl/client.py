@@ -97,7 +97,7 @@ class Client:
             response = requests.request(
                 method=http_method,
                 url=url,
-                verify=self.profile.insecure,
+                verify=not self.profile.insecure,
                 headers=self.headers,
                 params=ep_params,
                 json=data,
@@ -157,7 +157,7 @@ class Client:
             log_line = f"method={http_method}, url={url}"
             logger.debug(log_line)
             response = requests.request(
-                method=http_method, url=url, verify=self.profile.insecure
+                method=http_method, url=url, verify=not self.profile.insecure
             )
         except requests.exceptions.RequestException as e:
             logger.error(str(e))
