@@ -5,4 +5,5 @@ ChangeLog
 __pycache__
 build
 dist
+requirements.txt
 timon.yaml
