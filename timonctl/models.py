@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 import uuid as uuid_pkg
 
 from pydantic import BaseModel, Json
@@ -12,6 +12,13 @@ class Result(BaseModel):
     headers: Dict
     message: str = ""
     data: Json
+
+
+class AnyResult(BaseModel):
+    status_code: int
+    headers: Dict
+    message: str = ""
+    data: Any
 
 
 class TimonBaseModel(BaseModel):

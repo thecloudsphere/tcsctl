@@ -131,3 +131,30 @@ def get_deployment_logs(
                 )
     except TimonApiException as e:
         logger.error(str(e))
+
+
+@app.command("states")
+def get_deployment_states(
+    ctx: typer.Context, name: str, version_id: str = typer.Argument(default=None)
+):
+    try:
+        if not version_id:
+            states = ctx.obj.client.get_deployment_states(
+                name, ctx.obj.project_id
+            )
+            print(
+                tabulate(
+                    [x.values() for x in states],
+                    headers=["version_id", "last_modified"],
+                    tablefmt="psql",
+                )
+            )
+        else:
+            state = ctx.obj.client.get_deployment_state(
+                name, version_id, ctx.obj.project_id
+            )
+            with open(f"{version_id}.tar", "wb") as fp:
+                fp.write(state)
+
+    except TimonApiException as e:
+        logger.error(str(e))

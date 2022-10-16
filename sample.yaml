@@ -12,12 +12,12 @@ terraform-sample:
     repository_server: https://github.com
   blueprint_version: main
   inputs:
-    prefix: terraform
     clouds.yaml:
       type: file
       path: clouds.yaml
     "cloud name": openstack
     flavor: "SCS-1V:1:10"
+    prefix: "{{ timon.name }}"
     "public network": public
 
 # timonctl environment import ansible/base
@@ -29,10 +29,10 @@ ansible-sample:
   blueprint: ansible/openstack/minimal
   blueprint_version: main
   inputs:
-    prefix: ansible
     clouds.yaml:
       type: file
       path: clouds.yaml
     "cloud name": openstack
     flavor: "SCS-1V:1:10"
+    prefix: "{{ timon.name }}"
     "public network": public

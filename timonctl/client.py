@@ -111,12 +111,20 @@ class Client:
         # log_line = log_line_post.format(is_success, response.status_code, response.reason)
         if is_success:
             # logger.debug(log_line)
-            return Result(
-                status_code=response.status_code,
-                headers=response.headers,
-                message=response.reason,
-                data=response.content,
-            )
+            try:
+                return Result(
+                    status_code=response.status_code,
+                    headers=response.headers,
+                    message=response.reason,
+                    data=response.content,
+                )
+            except ValidationError:
+                return AnyResult(
+                    status_code=response.status_code,
+                    headers=response.headers,
+                    message=response.reason,
+                    data=response.content,
+                )
         # logger.error(log_line)
         raise TimonApiException(f"{response.status_code}: {response.reason}")
 
@@ -332,6 +340,20 @@ class Timon:
         )
         logs = [Log(**log) for log in result.data]
         return logs
+
+    def get_deployment_states(self, deployment: str, project: str) -> Dict:
+        project_id = self.get_project_id(self.organisation_id, project)
+        deployment_id = self.get_deployment_id(deployment, project_id)
+        result = self.client.get(f"deployments/{project_id}/{deployment_id}/states")
+        return result.data
+
+    def get_deployment_state(self, deployment: str, version_id: str, project: str):
+        project_id = self.get_project_id(self.organisation_id, project)
+        deployment_id = self.get_deployment_id(deployment, project_id)
+        result = self.client.get(
+            f"deployments/{project_id}/{deployment_id}/states/{version_id}"
+        )
+        return result.data
 
     # environments
 
