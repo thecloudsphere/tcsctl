@@ -6,6 +6,7 @@ template:
   blueprint: any(str(), include('blueprint'))
   blueprint_version: str()
   environment: any(str(), include('environment'))
+  environment_version: str(required=False)
   inputs: map(str(), include('input'))
 
 input: any(str(), include('extented_input'))
