@@ -4,7 +4,7 @@ import uuid as uuid_pkg
 
 from pydantic import BaseModel, Json
 
-from .enums import DeploymentAction, DeploymentStatus
+from .enums import DeploymentAction, DeploymentStatus, DeploymentType
 
 
 class Result(BaseModel):
@@ -55,6 +55,7 @@ class DeploymentBase(BaseModel):
 
 class Deployment(TimonBaseModel, DeploymentBase):
     action: Optional[DeploymentAction] = DeploymentAction.none
+    deployment_type: Optional[DeploymentType] = DeploymentType.environment
     status: Optional[DeploymentStatus] = DeploymentStatus.none
 
 
@@ -130,6 +131,21 @@ class Template(TimonBaseModel, TemplateBase):
 
 class TemplateWithInputs(TimonBaseModel, TemplateWithInputsBase):
     pass
+
+
+# flow
+
+
+class FlowBase(BaseModel):
+    name: Optional[str]
+
+
+class Flow(TimonBaseModel, FlowBase):
+    pass
+
+
+class FlowWithSteps(Flow):
+    steps: Optional[str]
 
 
 # other

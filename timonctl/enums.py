@@ -10,6 +10,12 @@ class DeploymentAction(str, Enum):
 
 
 @unique
+class DeploymentType(str, Enum):
+    flow = "FLOW"
+    environment = "ENVIRONMENT"
+
+
+@unique
 class DeploymentStatus(str, Enum):
     check = "CHECK"
     create = "CREATE"

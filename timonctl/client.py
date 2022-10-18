@@ -417,6 +417,40 @@ class Timon:
         environment = Environment(**result.data)
         return environment
 
+    # flows
+
+    def get_flow_id(self, flow: str, project: str = None) -> uuid_pkg.UUID:
+        if is_valid_uuid(flow):
+            return flow
+
+        project_id = self.get_project_id(self.organisation_id, project)
+
+        result = self.client.get(f"flows/{project_id}", ep_params={"q": flow})
+        flow = Template(**result.data[0])
+        return flow.id
+
+    def delete_flow(self, flow: str, project: str) -> Result:
+        project_id = self.get_project_id(self.organisation_id, project)
+        flow_id = self.get_flow_id(flow, project_id)
+        result = self.client.delete(f"flows/{project_id}/{flow_id}")
+        return result
+
+    def get_flow(self, flow: str, project: str) -> TemplateWithInputs:
+        project_id = self.get_project_id(self.organisation_id, project)
+        flow_id = self.get_flow_id(flow, project_id)
+        result = self.client.get(f"flows/{project_id}/{flow_id}")
+        flow = TemplateWithInputs(**result.data)
+        return flow
+
+    def get_flows(self, project: str) -> Template:
+        project_id = self.get_project_id(self.organisation_id, project)
+        result = self.client.get(f"flows/{project_id}")
+        flows = [Template(**flow) for flow in result.data]
+        return flows
+
+    def import_flow(self, name: str, project: str) -> uuid_pkg.UUID:
+        return
+
     # templates
 
     def get_template_id(self, template: str, project: str = None) -> uuid_pkg.UUID:

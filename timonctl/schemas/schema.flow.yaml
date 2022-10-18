@@ -1,0 +1,14 @@
+---
+flow:
+  name: str()
+  description: str(multiline=True, required=False)
+  steps: list(include('step'), min=1)
+
+---
+step:
+  name: str()
+  description: str(multiline=True, required=False)
+  template: str()
+  depends_on: str(required=False)
+  outputs_from: str(required=False)
+  state_from: str(required=False)
