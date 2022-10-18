@@ -31,6 +31,22 @@ class DeploymentStatus(str, Enum):
 
 
 @unique
+class FlowAction(str, Enum):
+    create = "CREATE"
+    destroy = "DESTROY"
+    none = "NONE"
+
+
+@unique
+class FlowStatus(str, Enum):
+    create = "CREATE"
+    created = "CREATED"
+    destroy = "DESTROY"
+    destroyed = "DESTROYED"
+    none = "NONE"
+
+
+@unique
 class Visibility(str, Enum):
     community = "COMMUNITY"
     private = "PRIVATE"

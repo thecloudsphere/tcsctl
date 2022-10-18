@@ -4,7 +4,13 @@ import uuid as uuid_pkg
 
 from pydantic import BaseModel, Json
 
-from .enums import DeploymentAction, DeploymentStatus, DeploymentType
+from .enums import (
+    DeploymentAction,
+    DeploymentStatus,
+    DeploymentType,
+    FlowAction,
+    FlowStatus,
+)
 
 
 class Result(BaseModel):
@@ -141,7 +147,8 @@ class FlowBase(BaseModel):
 
 
 class Flow(TimonBaseModel, FlowBase):
-    pass
+    action: Optional[FlowAction] = FlowAction.none
+    status: Optional[FlowStatus] = FlowStatus.none
 
 
 class FlowWithSteps(Flow):
