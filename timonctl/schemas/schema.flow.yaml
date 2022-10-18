@@ -8,7 +8,8 @@ flow:
 step:
   name: str()
   description: str(multiline=True, required=False)
-  template: str()
+  template: str(required=False)
+  deployment: str(required=False)
   depends_on: str(required=False)
   outputs_from: str(required=False)
   state_from: str(required=False)
