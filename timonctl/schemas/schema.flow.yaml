@@ -1,10 +1,12 @@
 ---
+map(str(), include('flow'))
+
+---
 flow:
   name: str()
   description: str(multiline=True, required=False)
   steps: list(include('step'), min=1)
 
----
 step:
   name: str()
   description: str(multiline=True, required=False)

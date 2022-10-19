@@ -435,21 +435,41 @@ class Timon:
         result = self.client.delete(f"flows/{project_id}/{flow_id}")
         return result
 
-    def get_flow(self, flow: str, project: str) -> TemplateWithInputs:
+    def get_flow(self, flow: str, project: str) -> Flow:
         project_id = self.get_project_id(self.organisation_id, project)
         flow_id = self.get_flow_id(flow, project_id)
         result = self.client.get(f"flows/{project_id}/{flow_id}")
-        flow = TemplateWithInputs(**result.data)
+        flow = Flow(**result.data)
         return flow
 
-    def get_flows(self, project: str) -> Template:
+    def get_flows(self, project: str) -> Flow:
         project_id = self.get_project_id(self.organisation_id, project)
         result = self.client.get(f"flows/{project_id}")
-        flows = [Template(**flow) for flow in result.data]
+        flows = [Flow(**flow) for flow in result.data]
         return flows
 
-    def import_flow(self, name: str, project: str) -> uuid_pkg.UUID:
-        return
+    def import_flow(self, path: str, name: str, project: str) -> Flow:
+        project_id = self.get_project_id(self.organisation_id, project)
+
+        logger.debug(f"Validating flow {path}")
+        try:
+            with open(path) as fp:
+                validate_content(fp.read(), "flow")
+        except Exception as e:
+            raise TimonException(f"Flow {path} is not valid:\n{e}")
+
+        with open(path) as fp:
+            data = yaml.safe_load(fp)
+
+        if name not in data:
+            raise TimonException(f"Flow {name} not found in {path}")
+
+        flow_data = data[name]
+        flow_data["steps"] = yaml.dump(flow_data["steps"])
+
+        result = self.client.post(f"flows/{project_id}", data=flow_data)
+        flow = Flow(**result.data)
+        return flow
 
     # templates
 
