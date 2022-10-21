@@ -139,9 +139,7 @@ def get_deployment_states(
 ):
     try:
         if not version_id:
-            states = ctx.obj.client.get_deployment_states(
-                name, ctx.obj.project_id
-            )
+            states = ctx.obj.client.get_deployment_states(name, ctx.obj.project_id)
             print(
                 tabulate(
                     [x.values() for x in states],

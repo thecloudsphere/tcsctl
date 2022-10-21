@@ -9,12 +9,12 @@ from urllib.parse import urljoin
 import uuid as uuid_pkg
 
 from dynaconf.utils.boxing import DynaBox
+from pydantic import ValidationError
 import requests
 import yaml
 
 from . import logger
 from .common import (
-    encode_token,
     get_token_from_file,
     is_valid_uuid,
     write_token_to_file,
@@ -64,8 +64,7 @@ class Client:
                 write_token_to_file(self.profile.name, self.token)
 
             # set authorization header
-            encoded_token = encode_token(self.token)
-            self.headers = {"Authorization": f"Bearer {encoded_token}"}
+            self.headers = {"Authorization": f"Bearer {token.access_token}"}
 
     def login(self) -> Token:
         password = self.profile.auth.get("password")

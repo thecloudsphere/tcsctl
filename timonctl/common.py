@@ -1,9 +1,8 @@
 import json
-import jwt
 import os
 import uuid
 
-from . import logger, settings, user_config_dir
+from . import logger, user_config_dir
 from .models import Token
 
 
@@ -46,9 +45,3 @@ def write_token_to_file(profile: str, token: Token):
     logger.debug(f"Writing token for {profile}: {path}")
     with open(path, "w+") as fp:
         json.dump(token.dict(), fp)
-
-
-def encode_token(token: Token) -> str:
-    return jwt.encode(
-        token.dict(), settings.jwt_secret, algorithm=settings.jwt_algorithm
-    )
