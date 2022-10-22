@@ -64,7 +64,11 @@ class Client:
                 write_token_to_file(self.profile.name, self.token)
 
             # set authorization header
-            self.headers = {"Authorization": f"Bearer {token.access_token}"}
+            self.headers = {
+                "Authorization": f"Bearer {token.access_token}",
+                "X-Timon-Project-ID": token.project_id,
+                "X-Timon-Organisation-ID": token.organisation_id,
+            }
 
     def login(self) -> Token:
         password = self.profile.auth.get("password")
