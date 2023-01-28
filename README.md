@@ -1,6 +1,6 @@
-# Welcome to Timon
+# Welcome to The Cloudsphere
 
-Timon efficiently manages your cloud infrastructures 🚀
+The Cloudsphere efficiently manages your cloud infrastructures 🚀
 
 Automate infrastructure as code (IaC) provisioning at any scale,
 at any cloud or data center with any tool. Through a single central
@@ -9,7 +9,7 @@ as self-service.
 
 ## Getting started
 
-Install the CLI for Timon with ``pip3 install timonctl``.
+Install the CLI for The Cloudsphere with ``pip3 install timonctl``.
 
 Prerequisite for the use is an account on our public service or on a
 local on-premise installation.
