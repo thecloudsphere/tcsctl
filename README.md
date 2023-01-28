@@ -87,6 +87,35 @@ Import the template ``terraform-sample`` defined in the previously created
 
 ```
 timonctl template import sample.yaml terraform-sample
++---------------------+--------------------------------------+
+| Field               | Value                                |
+|---------------------+--------------------------------------|
+| blueprint_id        | 803f3163-66b7-4c21-9c42-ef92fdb96fa6 |
+| blueprint_version   | main                                 |
+| environment_id      | d4135a7b-4eff-4e25-9f61-618b81b9a147 |
+| environment_version |                                      |
+| name                | terraform-sample                     |
+| id                  | 05aa4b88-50ed-4dd1-8006-64772ae3f0f9 |
+| created_at          | 2023-01-28 22:26:02                  |
++---------------------+--------------------------------------+
+```
+
+Blueprints and environments can be listed to verify the import.
+
+```
+timonctl environment list
++---------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
+| name                | repository         | repository_path   | repository_server   | id                                   | created_at          |
+|---------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------|
+| terraform/openstack | timontech/registry | environments      | https://github.com  | d4135a7b-4eff-4e25-9f61-618b81b9a147 | 2023-01-28 22:26:01 |
++---------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
+
+timonctl blueprint list
++-----------------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
+| name                        | repository         | repository_path   | repository_server   | id                                   | created_at          |
+|-----------------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------|
+| terraform/openstack/minimal | timontech/registry | blueprints        | https://github.com  | 803f3163-66b7-4c21-9c42-ef92fdb96fa6 | 2023-01-28 22:26:02 |
++-----------------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
 ```
 
 A deployment ``hello-world`` can now be created from the template
@@ -94,6 +123,17 @@ A deployment ``hello-world`` can now be created from the template
 
 ```
 timonctl deployment create hello-world terraform-sample
++-----------------+--------------------------------------+
+| Field           | Value                                |
+|-----------------+--------------------------------------|
+| name            | hello-world                          |
+| template_id     | 05aa4b88-50ed-4dd1-8006-64772ae3f0f9 |
+| id              | 5fe18e39-1b5a-4d0e-8760-448b6cf2ab19 |
+| created_at      | 2023-01-28 22:35:54                  |
+| action          | CREATE                               |
+| deployment_type | ENVIRONMENT                          |
+| status          | NONE                                 |
++-----------------+--------------------------------------+
 ```
 
 Once the deployment has been created, the public IP address and the SSH keypair
@@ -112,7 +152,7 @@ MIIEpAIBAAKCAQEA1aiAph+QxP0dp18b04b24oE8+e4FFdxULeKiT4vZssuVRrFy
 ```
 
 The logs that were printed during the creation of the deployment can
-be displayed using the timonctl deployments logs command.
+be displayed using the ``timonctl deployments logs`` command.
 
 ```
 timonctl deployment logs --show hello-world create
