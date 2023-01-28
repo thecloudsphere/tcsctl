@@ -21,7 +21,7 @@ the authentication details.
 # log_level: DEBUG
 profiles:
   default:
-    api_url: https://api.timon.osism.tech/api/
+    api_url: https://api.demo.thecloudsphere.io/api/
     api_version: v1
     insecure: false
     auth:
