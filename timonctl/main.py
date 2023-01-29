@@ -44,9 +44,7 @@ def login(
         token = get_token_from_file(ctx.obj.profile.name)
 
     if not token:
-        if ctx.obj.profile.auth.password:
-            password = ctx.obj.profile.auth.get("password")
-        else:
+        if not ctx.obj.profile.auth.password:
             ctx.obj.profile.auth.password = getpass()
 
         client = get_http_client(ctx.obj.profile)
