@@ -99,16 +99,28 @@ def delete_deployment(ctx: typer.Context, name: str):
 
 @app.command("outputs")
 def get_deployment_outputs(
-    ctx: typer.Context, name: str, output: str = typer.Argument(default=None)
+    ctx: typer.Context,
+    name: str,
+    output: str = typer.Argument(default=None),
+    file: str = typer.Option(default=None, help="Write to file instead of stdout"),
 ):
     try:
         outputs = ctx.obj.client.get_deployment_outputs(
             name, output, ctx.obj.project_id
         )
         if output:
-            print(outputs[output])
+            result = outputs[output]
         else:
-            print(outputs)
+            result = outputs
+
+        if file:
+            with open(file, "w+") as fp:
+                print(
+                    f"Output {output} from deployment {name} was written to file {file}."
+                )
+                fp.write(result)
+        else:
+            print(result)
     except TimonApiException as e:
         logger.error(str(e))
 

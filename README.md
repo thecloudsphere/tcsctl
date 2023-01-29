@@ -174,6 +174,16 @@ MIIEpAIBAAKCAQEA1aiAph+QxP0dp18b04b24oE8+e4FFdxULeKiT4vZssuVRrFy
 [...]
 ```
 
+With ``timonctl deployment outputs hello-world`` it is possible to output all
+available outputs.
+
+With the parameter ``--file``, the output can be written directly to a file.
+
+```
+timonctl deployment outputs hello-world private_key --file id_rsa.hello-world
+Output private_key from deployment hello-world was written to file id_rsa.hello-world.
+```
+
 The logs that were printed during the creation of the deployment can
 be displayed using the ``timonctl deployments logs`` command.
 
