@@ -8,34 +8,33 @@ from . import logger
 from .exceptions import TimonApiException
 from .models import *
 
-
 app = typer.Typer()
 
 
 @app.command("import")
-def import_blueprint(
+def import_environment(
     ctx: typer.Context,
     name: str,
-    repository: str = "timontech/registry",
+    repository: str = "thecloudsphere/registry",
     repository_server: str = "https://github.com",
     repository_key: str = None,
 ):
     try:
-        blueprint = ctx.obj.client.import_blueprint(
+        environment = ctx.obj.client.import_environment(
             name,
             repository,
-            "blueprints",
+            "environments",
             repository_server,
             repository_key,
             ctx.obj.project_id,
         )
-        print(tabulate(blueprint, headers=["Field", "Value"], tablefmt="psql"))
+        print(tabulate(environment, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
 
 @app.command("list")
-def list_blueprints(
+def list_environment(
     ctx: typer.Context,
     column: List[str] = typer.Option(
         default=[],
@@ -43,10 +42,10 @@ def list_blueprints(
     ),
 ):
     try:
-        blueprints = ctx.obj.client.get_blueprints(ctx.obj.project_id)
+        environments = ctx.obj.client.get_environments(ctx.obj.project_id)
         df = DataFrame(
-            (x.dict().values() for x in blueprints),
-            columns=Blueprint.get_field_names(),
+            (x.dict().values() for x in environments),
+            columns=Environment.get_field_names(),
         )
         if column:
             result = tabulate(df.filter(items=column), headers=column, tablefmt="psql")
@@ -63,28 +62,28 @@ def list_blueprints(
 
 
 @app.command("show")
-def show_blueprint(ctx: typer.Context, name: str):
+def show_environment(ctx: typer.Context, name: str):
     try:
-        blueprint = ctx.obj.client.get_blueprint(name, ctx.obj.project_id)
-        print(tabulate(blueprint, headers=["Field", "Value"], tablefmt="psql"))
+        environment = ctx.obj.client.get_environment(name, ctx.obj.project_id)
+        print(tabulate(environment, headers=["Field", "Value"], tablefmt="psql"))
     except TimonApiException as e:
         logger.error(str(e))
 
 
 @app.command("edit")
-def edit_blueprint(ctx: typer.Context, name: str):
-    logger.info("STUB: edit_blueprint")
+def edit_environment(name: str):
+    logger.info("STUB: edit_environment")
 
 
 @app.command("update")
-def update_blueprint(ctx: typer.Context, name: str):
-    ctx.obj.client.update_blueprint(name, ctx.obj.project_id)
+def update_environment(ctx: typer.Context, name: str):
+    ctx.obj.client.update_environment(name, ctx.obj.project_id)
 
 
 @app.command("delete")
-def delete_blueprint(ctx: typer.Context, name: str):
+def delete_environment(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.delete_blueprint(name, ctx.obj.project_id)
+        result = ctx.obj.client.delete_environment(name, ctx.obj.project_id)
         print(result)
     except TimonApiException as e:
         logger.error(str(e))

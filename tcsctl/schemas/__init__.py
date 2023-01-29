@@ -5,7 +5,7 @@ import yamale
 
 from .. import logger
 
-SCHEMA_PATH = pkg_resources.resource_filename("timonctl", "schemas/")
+SCHEMA_PATH = pkg_resources.resource_filename("tcsctl", "schemas/")
 
 
 def validate_content(content: str, schema: str):

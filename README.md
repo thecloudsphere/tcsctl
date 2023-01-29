@@ -9,7 +9,7 @@ as self-service.
 
 ## Getting started
 
-Install the CLI for The Cloudsphere with ``pip3 install timonctl``.
+Install the CLI for The Cloudsphere with ``pip3 install tcsctl``.
 
 Prerequisite for the use is an account on our public service or on a
 local on-premise installation.
@@ -34,14 +34,14 @@ profiles:
 To be sure, check that the configuration is valid.
 
 ```
-timonctl validate config tcs.yaml
+tcsctl validate config tcs.yaml
 Config tcs.yaml is valid.
 ```
 
 Before you can use the CLI, you have to log in.
 
 ```
-timonctl login
+tcsctl login
 Password:
 Logged in successfully.
 ```
@@ -53,11 +53,11 @@ deployment with Terraform on an OpenStack environment.
 terraform-sample:
   environment:
     name: terraform/openstack
-    repository: timontech/registry
+    repository: thecloudsphere/registry
     repository_server: https://github.com
   blueprint:
     name: terraform/openstack/minimal
-    repository: timontech/registry
+    repository: thecloudsphere/registry
     repository_server: https://github.com
   blueprint_version: main
   inputs:
@@ -73,7 +73,7 @@ terraform-sample:
 To be sure, check that the template is valid.
 
 ```
-timonctl validate template sample.yaml
+tcsctl validate template sample.yaml
 Template sample.yaml is valid.
 ```
 
@@ -86,7 +86,7 @@ Import the template ``terraform-sample`` defined in the previously created
 ``sample.yaml`` file.
 
 ```
-timonctl template import sample.yaml terraform-sample
+tcsctl template import sample.yaml terraform-sample
 +---------------------+--------------------------------------+
 | Field               | Value                                |
 |---------------------+--------------------------------------|
@@ -103,18 +103,18 @@ timonctl template import sample.yaml terraform-sample
 Blueprints and environments can be listed to verify the import.
 
 ```
-timonctl environment list
+tcsctl environment list
 +---------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
 | name                | repository         | repository_path   | repository_server   | id                                   | created_at          |
 |---------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------|
-| terraform/openstack | timontech/registry | environments      | https://github.com  | d4135a7b-4eff-4e25-9f61-618b81b9a147 | 2023-01-28 22:26:01 |
+| terraform/openstack | thecloudsphere/registry | environments      | https://github.com  | d4135a7b-4eff-4e25-9f61-618b81b9a147 | 2023-01-28 22:26:01 |
 +---------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
 
-timonctl blueprint list
+tcsctl blueprint list
 +-----------------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
 | name                        | repository         | repository_path   | repository_server   | id                                   | created_at          |
 |-----------------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------|
-| terraform/openstack/minimal | timontech/registry | blueprints        | https://github.com  | 803f3163-66b7-4c21-9c42-ef92fdb96fa6 | 2023-01-28 22:26:02 |
+| terraform/openstack/minimal | thecloudsphere/registry | blueprints        | https://github.com  | 803f3163-66b7-4c21-9c42-ef92fdb96fa6 | 2023-01-28 22:26:02 |
 +-----------------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
 ```
 
@@ -122,7 +122,7 @@ A deployment ``hello-world`` can now be created from the template
 ``terraform-sample``.
 
 ```
-timonctl deployment create hello-world terraform-sample
+tcsctl deployment create hello-world terraform-sample
 +-----------------+--------------------------------------+
 | Field           | Value                                |
 |-----------------+--------------------------------------|
@@ -140,7 +140,7 @@ When the orchestrator selects the deployment for execution, the status is change
 from ``NONE`` to ``CREATE``.
 
 ```
-timonctl deployment list --column name --column status
+tcsctl deployment list --column name --column status
 +----+-------------+----------+
 |    | name        | status   |
 |----+-------------+----------|
@@ -151,7 +151,7 @@ timonctl deployment list --column name --column status
 Once the deployment has been created the status changes to ``CREATED``.
 
 ```
-timonctl deployment list --column name --column status
+tcsctl deployment list --column name --column status
 +----+-------------+----------+
 |    | name        | status   |
 |----+-------------+----------|
@@ -163,32 +163,32 @@ The public IP address and the SSH keypair for the login can then be retrieved vi
 the ``outputs`` command.
 
 ```
-timonctl deployment outputs hello-world address
+tcsctl deployment outputs hello-world address
 10.100.3.41
 ```
 
 ```
-timonctl deployment outputs hello-world private_key
+tcsctl deployment outputs hello-world private_key
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEA1aiAph+QxP0dp18b04b24oE8+e4FFdxULeKiT4vZssuVRrFy
 [...]
 ```
 
-With ``timonctl deployment outputs hello-world`` it is possible to output all
+With ``tcsctl deployment outputs hello-world`` it is possible to output all
 available outputs.
 
 With the parameter ``--file``, the output can be written directly to a file.
 
 ```
-timonctl deployment outputs hello-world private_key --file id_rsa.hello-world
+tcsctl deployment outputs hello-world private_key --file id_rsa.hello-world
 Output private_key from deployment hello-world was written to file id_rsa.hello-world.
 ```
 
 The logs that were printed during the creation of the deployment can
-be displayed using the ``timonctl deployments logs`` command.
+be displayed using the ``tcsctl deployments logs`` command.
 
 ```
-timonctl deployment logs --show hello-world create
+tcsctl deployment logs --show hello-world create
 data.openstack_networking_network_v2.public: Reading...
 data.openstack_networking_network_v2.public: Read complete after 1s [id=665eea18-2b85-427c-b0bf-a6fd040cc0fc]
 
@@ -205,13 +205,13 @@ Terraform will perform the following actions:
 If the deployment is no longer needed, it can be destroyed.
 
 ```
-timonctl deployment destroy hello-world
+tcsctl deployment destroy hello-world
 ```
 
 All logs from a specific period for a deployment can also be displayed.
 
 ```
-timonctl deployment logs hello-world '15 minutes ago'
+tcsctl deployment logs hello-world '15 minutes ago'
 +------------+--------------------------------------+---------------------+
 | category   | id                                   | created_at          |
 |------------+--------------------------------------+---------------------|
@@ -227,13 +227,13 @@ timonctl deployment logs hello-world '15 minutes ago'
 The ID of a log entry can be used to display a specific log entry.
 
 ```
-timonctl deployment logs hello-world b0765dac-2f1b-4d7b-84fc-85e328bfa018
-openstack_compute_keypair_v2.timon: Refreshing state... [id=terraform-keypair]
+tcsctl deployment logs hello-world b0765dac-2f1b-4d7b-84fc-85e328bfa018
+openstack_compute_keypair_v2.tcs: Refreshing state... [id=terraform-keypair]
 data.openstack_networking_network_v2.public: Reading...
-openstack_networking_network_v2.timon: Refreshing state... [id=23b0a0e1-e560-4b50-9bd8-4b7ca9cfc203]
-openstack_compute_secgroup_v2.timon: Refreshing state... [id=3db448c1-9a3c-495b-aec8-514fd774fdf8]
+openstack_networking_network_v2.tcs: Refreshing state... [id=23b0a0e1-e560-4b50-9bd8-4b7ca9cfc203]
+openstack_compute_secgroup_v2.tcs: Refreshing state... [id=3db448c1-9a3c-495b-aec8-514fd774fdf8]
 local_sensitive_file.private_key: Refreshing state... [id=14070ff949339f2a7eb97690cd4f3f7a0c13e2a3]
-openstack_networking_subnet_v2.timon: Refreshing state... [id=acfb2765-e522-41c1-9178-fab084611a1c]
+openstack_networking_subnet_v2.tcs: Refreshing state... [id=acfb2765-e522-41c1-9178-fab084611a1c]
 [...]
 ```
 
@@ -241,12 +241,12 @@ After a deployment has been destroyed, it can be deleted. All associated logs
 are then also deleted.
 
 ```
-timonctl deployment delete hello-world
+tcsctl deployment delete hello-world
 ```
 
 If you no longer need to use the CLI, you can log out.
 
 ```
-timonctl logout
+tcsctl logout
 Logged out successfully.
 ```

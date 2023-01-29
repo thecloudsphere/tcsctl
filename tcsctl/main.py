@@ -81,7 +81,7 @@ def validate(schema: str, path: str):
 
 @app.callback()
 def entrypoint(
-    ctx: typer.Context, profile: str = typer.Option("default", envvar="TIMON_PROFILE")
+    ctx: typer.Context, profile: str = typer.Option("default", envvar="TCS_PROFILE")
 ):
 
     if ctx.invoked_subcommand == "validate":
