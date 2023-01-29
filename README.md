@@ -207,12 +207,6 @@ Terraform will perform the following actions:
 [...]
 ```
 
-If the deployment is no longer needed, it can be destroyed.
-
-```
-tcsctl deployment destroy hello-world
-```
-
 All logs from a specific period for a deployment can also be displayed.
 
 ```
@@ -240,6 +234,12 @@ openstack_compute_secgroup_v2.tcs: Refreshing state... [id=3db448c1-9a3c-495b-ae
 local_sensitive_file.private_key: Refreshing state... [id=14070ff949339f2a7eb97690cd4f3f7a0c13e2a3]
 openstack_networking_subnet_v2.tcs: Refreshing state... [id=acfb2765-e522-41c1-9178-fab084611a1c]
 [...]
+```
+
+If the deployment is no longer needed, it can be destroyed.
+
+```
+tcsctl deployment destroy hello-world
 ```
 
 After a deployment has been destroyed, it can be deleted. All associated logs
