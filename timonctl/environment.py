@@ -1,3 +1,6 @@
+from typing import List
+
+from pandas import DataFrame
 from tabulate import tabulate
 import typer
 
@@ -31,16 +34,29 @@ def import_environment(
 
 
 @app.command("list")
-def list_environment(ctx: typer.Context):
+def list_environment(
+    ctx: typer.Context,
+    column: List[str] = typer.Option(
+        default=[],
+        help="Specify the column(s) to include, can be repeated to show multiple columns",
+    ),
+):
     try:
         environments = ctx.obj.client.get_environments(ctx.obj.project_id)
-        print(
-            tabulate(
-                [x.dict().values() for x in environments],
-                headers=Environment.get_field_names(),
+        df = DataFrame(
+            (x.dict().values() for x in environments),
+            columns=Environment.get_field_names(),
+        )
+        if column:
+            result = tabulate(df.filter(items=column), headers=column, tablefmt="psql")
+        else:
+            result = tabulate(
+                df,
+                headers=df.columns,
                 tablefmt="psql",
             )
-        )
+
+        print(result)
     except TimonApiException as e:
         logger.error(str(e))
 

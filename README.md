@@ -136,8 +136,31 @@ timonctl deployment create hello-world terraform-sample
 +-----------------+--------------------------------------+
 ```
 
-Once the deployment has been created, the public IP address and the SSH keypair
-for the login can be retrieved via the outputs.
+When the orchestrator selects the deployment for execution, the status is changed
+from ``NONE`` to ``CREATE``.
+
+```
+timonctl deployment list --column name --column status
++----+-------------+----------+
+|    | name        | status   |
+|----+-------------+----------|
+|  0 | hello-world | CREATE   |
++----+-------------+----------+
+```
+
+Once the deployment has been created the status changes to ``CREATED``.
+
+```
+timonctl deployment list --column name --column status
++----+-------------+----------+
+|    | name        | status   |
+|----+-------------+----------|
+|  0 | hello-world | CREATED  |
++----+-------------+----------+
+```
+
+The public IP address and the SSH keypair for the login can then be retrieved via
+the ``outputs`` command.
 
 ```
 timonctl deployment outputs hello-world address

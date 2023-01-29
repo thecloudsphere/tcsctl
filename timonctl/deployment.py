@@ -1,3 +1,6 @@
+from typing import List
+
+from pandas import DataFrame
 from tabulate import tabulate
 import typer
 
@@ -10,16 +13,29 @@ app = typer.Typer()
 
 
 @app.command("list")
-def list_deployment(ctx: typer.Context):
+def list_deployment(
+    ctx: typer.Context,
+    column: List[str] = typer.Option(
+        default=[],
+        help="Specify the column(s) to include, can be repeated to show multiple columns",
+    ),
+):
     try:
         deployments = ctx.obj.client.get_deployments(ctx.obj.project_id)
-        print(
-            tabulate(
-                [x.dict().values() for x in deployments],
-                headers=Deployment.get_field_names(),
+        df = DataFrame(
+            (x.dict().values() for x in deployments),
+            columns=Deployment.get_field_names(),
+        )
+        if column:
+            result = tabulate(df.filter(items=column), headers=column, tablefmt="psql")
+        else:
+            result = tabulate(
+                df,
+                headers=df.columns,
                 tablefmt="psql",
             )
-        )
+
+        print(result)
     except TimonApiException as e:
         logger.error(str(e))
 
