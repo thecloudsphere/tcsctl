@@ -106,19 +106,21 @@ tcsctl template import sample.yaml terraform-sample
 Blueprints and environments can be listed to verify the import.
 
 ```
-tcsctl environment list
-+---------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
-| name                | repository         | repository_path   | repository_server   | id                                   | created_at          |
-|---------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------|
-| terraform/openstack | thecloudsphere/registry | environments      | https://github.com  | d4135a7b-4eff-4e25-9f61-618b81b9a147 | 2023-01-28 22:26:01 |
-+---------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
+tcsctl environment list --column name --column repository
++----+---------------------+-------------------------+
+|    | name                | repository              |
+|----+---------------------+-------------------------|
+|  0 | terraform/openstack | thecloudsphere/registry |
++----+---------------------+-------------------------+
+```
 
-tcsctl blueprint list
-+-----------------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
-| name                        | repository         | repository_path   | repository_server   | id                                   | created_at          |
-|-----------------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------|
-| terraform/openstack/minimal | thecloudsphere/registry | blueprints        | https://github.com  | 803f3163-66b7-4c21-9c42-ef92fdb96fa6 | 2023-01-28 22:26:02 |
-+-----------------------------+--------------------+-------------------+---------------------+--------------------------------------+---------------------+
+```
+tcsctl blueprint list --column name --column repository
++----+-----------------------------+-------------------------+
+|    | name                        | repository              |
+|----+-----------------------------+-------------------------|
+|  0 | terraform/openstack/minimal | thecloudsphere/registry |
++----+-----------------------------+-------------------------+
 ```
 
 A deployment ``hello-world`` can now be created from the template
