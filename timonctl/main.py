@@ -88,7 +88,7 @@ def entrypoint(
         return
 
     try:
-        with open("timon.yaml") as fp:
+        with open("tcs.yaml") as fp:
             validate_content(fp.read(), "config")
     except Exception as e:
         print(str(e))

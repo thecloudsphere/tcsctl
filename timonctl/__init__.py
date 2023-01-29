@@ -8,7 +8,7 @@ from dynaconf import Dynaconf, Validator
 from loguru import logger
 import pbr.version
 
-settings = Dynaconf(envvar_prefix="TIMON", settings_files=["timon.yaml"])
+settings = Dynaconf(envvar_prefix="TIMON", settings_files=["tcs.yaml"])
 settings.validators.register(
     Validator("LOG_LEVEL", default="INFO"),
     Validator("JWT_ALGORITHM", default="HS256"),

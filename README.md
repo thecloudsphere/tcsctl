@@ -14,7 +14,7 @@ Install the CLI for The Cloudsphere with ``pip3 install timonctl``.
 Prerequisite for the use is an account on our public service or on a
 local on-premise installation.
 
-Create the file ``timon.yaml`` which contains the details of the API and
+Create the file ``tcs.yaml`` which contains the details of the API and
 the authentication details.
 
 ```
@@ -34,8 +34,8 @@ profiles:
 To be sure, check that the configuration is valid.
 
 ```
-timonctl validate config timon.yaml
-Config timon.yaml is valid.
+timonctl validate config tcs.yaml
+Config tcs.yaml is valid.
 ```
 
 Before you can use the CLI, you have to log in.
