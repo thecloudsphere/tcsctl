@@ -255,3 +255,31 @@ If you no longer need to use the CLI, you can log out.
 tcsctl logout
 Logged out successfully.
 ```
+
+## Different Infrastructure-as-Code tool, same result
+
+Previously, we created a simple environment with a blueprint for Terraform.
+Here is a summary of the necessary commands
+
+```
+tcsctl template import sample.yaml terraform-sample
+tcsctl deployment create hello-world terraform-sample
+tcsctl deployment outputs hello-world address
+tcsctl deployment outputs hello-world private_key
+tcsctl deployment detroy hello-world
+tcsctl deployment delete hello-world
+```
+
+The same result as in the previous example with the blueprint for Terraform
+can also be produced with a different Infrastructure-as-Code tool For example
+with Ansible. The following commands import a prepared blueprint for Ansible
+and then create the same environment as before with Terraform.
+
+```
+tcsctl template import sample.yaml ansible-sample
+tcsctl deployment create hello-ansible ansible-sample
+tcsctl deployment outputs hello-ansible address
+tcsctl deployment outputs hello-ansible private_key
+tcsctl deployment detroy hello-ansible
+tcsctl deployment delete hello-ansible
+```
