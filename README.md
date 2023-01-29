@@ -1,5 +1,8 @@
 # Welcome to The Cloudsphere
 
+[![PyPi version](https://badgen.net/pypi/v/tcsctl/)](https://pypi.org/project/tcsctl/)
+[![PyPi license](https://badgen.net/pypi/license/tcsctl/)](https://pypi.org/project/tcsctl/)
+
 The Cloudsphere efficiently manages your cloud infrastructures 🚀
 
 Automate infrastructure as code (IaC) provisioning at any scale,
