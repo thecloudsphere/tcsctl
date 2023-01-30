@@ -199,6 +199,19 @@ tcsctl deployment outputs hello-world private_key --file id_rsa.hello-world
 Output private_key from deployment hello-world was written to file id_rsa.hello-world.
 ```
 
+There are blueprints that support a console, for example SSH, for control.
+This console can be called up with the command ``tcsctl deployment control``.
+The blueprints used in this Getting Started Guide support the control feature.
+A deployment must be in status ``CREATED`` or ``RECONCILED`` for the control
+feature to be usable.
+
+```
+tcsctl deployment control hello-world
+Welcome to Ubuntu 22.04.1 LTS (GNU/Linux 5.15.0-52-generic x86_64)
+[...]
+ubuntu@hello-world-instance:~$
+```
+
 The logs that were printed during the creation of the deployment can
 be displayed using the ``tcsctl deployments logs`` command.
 

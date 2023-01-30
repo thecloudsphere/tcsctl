@@ -22,14 +22,12 @@ input:
   required: bool()
   description: str(multiline=True)
   visibility: enum('private', required=False)
-  template: bool(required=False)
 
 output:
   name: str()
   source: any(str(), include('source'))
   description: str(multiline=True)
   visibility: enum('private', required=False)
-  template: bool(required=False)
 
 destination:
   type: enum('environment', 'file')

@@ -1,11 +1,18 @@
+import os
+import subprocess
+import tempfile
+from types import SimpleNamespace
 from typing import List
 
+import jinja2
+import json
 from pandas import DataFrame
 from tabulate import tabulate
 import typer
 
 from . import logger
 from .common import is_valid_uuid
+from .enums import DeploymentStatus
 from .exceptions import TimonApiException
 from .models import *
 
@@ -181,6 +188,59 @@ def get_deployment_states(
             )
             with open(f"{version_id}.tar", "wb") as fp:
                 fp.write(state)
+
+    except TimonApiException as e:
+        logger.error(str(e))
+
+
+@app.command()
+def control(ctx: typer.Context, name: str):
+    try:
+        deployment = ctx.obj.client.get_deployment(name, ctx.obj.project_id)
+
+        if deployment.status in [DeploymentStatus.reconciled, DeploymentStatus.created]:
+            template = ctx.obj.client.get_template(
+                deployment.template_id, ctx.obj.project_id
+            )
+            blueprint = ctx.obj.client.get_blueprint(
+                template.blueprint_id, ctx.obj.project_id
+            )
+
+            if not blueprint.control:
+                logger.error(f"Console not supported by deployment {name}")
+
+            else:
+                data_outputs = ctx.obj.client.get_deployment_outputs(
+                    name, None, ctx.obj.project_id
+                )
+                template_data = {
+                    "outputs": SimpleNamespace(**data_outputs),
+                }
+                control = json.loads(blueprint.control)
+                parsed_arguments = {}
+                for argument in control["arguments"]:
+                    template = jinja2.Environment(loader=jinja2.BaseLoader).from_string(
+                        argument["value"]
+                    )
+                    parsed_arguments[argument["name"]] = template.render(
+                        **template_data
+                    )
+
+                if control["type"] == "ssh":
+                    with tempfile.NamedTemporaryFile() as t:
+                        os.chmod(t.name, 0o600)
+                        with open(t.name, "w+") as fp:
+                            fp.write(parsed_arguments["identity_file"])
+
+                        ssh_arguments = "-o LogLevel=ERROR -o StrictHostKeyChecking=no"
+                        command = f"ssh {ssh_arguments} -i {fp.name} {parsed_arguments['user']}@{parsed_arguments['destination']}"
+                        subprocess.call(command, shell=True)
+                else:
+                    logger.error(f"Console type {control['type']} not supported")
+        else:
+            logger.error(
+                f"Deployment is in state {deployment.status}, it has to be in state RECONCILED or CREATED"
+            )
 
     except TimonApiException as e:
         logger.error(str(e))

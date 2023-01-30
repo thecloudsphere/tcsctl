@@ -45,6 +45,7 @@ class BlueprintBase(BaseModel):
     repository: Optional[str]
     repository_path: Optional[str]
     repository_server: Optional[str]
+    control: Optional[str]
 
 
 class Blueprint(TimonBaseModel, BlueprintBase):

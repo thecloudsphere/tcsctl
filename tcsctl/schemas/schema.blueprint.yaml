@@ -8,6 +8,7 @@ blueprint:
   schedule: str(required=False)
   environment: include('environment')
   versions: list(include('version'), min=1)
+  control: include('control', required=False)
   inputs: list(include('input'))
   outputs: list(include('output'))
 
@@ -22,14 +23,21 @@ input:
   required: bool()
   description: str(multiline=True)
   visibility: enum('private', required=False)
-  template: bool(required=False)
 
 output:
   name: str()
   source: any(str(), include('source'))
   description: str(multiline=True)
   visibility: enum('private', required=False)
-  template: bool(required=False)
+
+control:
+  type: str()
+  arguments: list(include('control_argument'))
+
+control_argument:
+  name: str()
+  value: str()
+  type: enum('string', 'file', required=False)
 
 destination:
   type: enum('environment', 'file')
