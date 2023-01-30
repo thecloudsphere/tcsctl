@@ -9,6 +9,7 @@ from urllib.parse import urljoin
 import uuid as uuid_pkg
 
 from dynaconf.utils.boxing import DynaBox
+from dynaconf.vendor.box.exceptions import BoxKeyError
 from pydantic import ValidationError
 import requests
 import yaml
@@ -74,12 +75,22 @@ class Client:
         password = self.profile.auth.get("password")
         if not password:
             self.profile.auth.password = getpass()
+
         login_data = {
-            "organisation": self.profile.auth.organisation,
             "password": self.profile.auth.password,
-            "project": self.profile.auth.project,
             "username": self.profile.auth.username,
         }
+
+        try:
+            login_data["organisation"] = self.profile.auth.organisation
+        except BoxKeyError:
+            pass
+
+        try:
+            login_data["project"] = self.profile.auth.project
+        except BoxKeyError:
+            pass
+
         result = self.post("auth/tokens", data=login_data)
 
         self.token = Token(**result.data)

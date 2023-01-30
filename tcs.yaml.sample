@@ -6,8 +6,8 @@ profiles:
     api_version: v1
     insecure: False
     auth:
-      organisation:
-      project:
+      # organisation:
+      # project:
       username:
       password:
       # token:

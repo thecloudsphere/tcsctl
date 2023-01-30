@@ -28,10 +28,8 @@ profiles:
     api_version: v1
     insecure: false
     auth:
-      organisation: Sample
-      project: Sample
-      username: sample
-      # password: password
+      username: sample@thecloudsphere.io
+      password: password
 ```
 
 To be sure, check that the configuration is valid.

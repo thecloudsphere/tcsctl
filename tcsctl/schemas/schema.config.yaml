@@ -10,7 +10,7 @@ profile:
   auth: include('auth')
 
 auth:
-  organisation: str()
-  project: str()
+  organisation: str(required=False)
+  project: str(required=False)
   username: str()
   password: str(required=False)
