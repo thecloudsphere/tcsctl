@@ -28,7 +28,7 @@ profiles:
     api_version: v1
     insecure: false
     auth:
-      username: sample@thecloudsphere.io
+      username: client1@thecloudsphere.io
       password: password
 ```
 
@@ -45,6 +45,18 @@ Before you can use the CLI, you have to log in.
 tcsctl login
 Password:
 Logged in successfully.
+```
+
+The list of visible projects allows you to check whether the login was
+successful.
+
+```
+tcsctl project list
++----+--------------------------------+--------------------------------------+---------------------+
+|    | name                           | id                                   | created_at          |
+|----+--------------------------------+--------------------------------------+---------------------|
+|  0 | client1@demo.thecloudsphere.io | 64ed6e39-0c05-42aa-a0ac-2267a7be5223 | 2023-01-30 16:18:22 |
++----+--------------------------------+--------------------------------------+---------------------+
 ```
 
 Create the file ``sample.yaml`` which contains a sample template for a
