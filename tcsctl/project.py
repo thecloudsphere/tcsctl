@@ -60,7 +60,7 @@ def create_project(ctx: typer.Context, name: str):
 @app.command("delete")
 def delete_project(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.delete_project(name, ctx.obj.organisation_id)
-        print(result)
+        ctx.obj.client.delete_project(name, ctx.obj.organisation_id)
+        logger.info(f"Project {name} deleted")
     except TimonApiException as e:
         logger.error(str(e))

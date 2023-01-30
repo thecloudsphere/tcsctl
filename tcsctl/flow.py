@@ -73,7 +73,7 @@ def update_flow(ctx: typer.Context, name: str):
 @app.command("delete")
 def delete_flow(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.delete_flow(name, ctx.obj.project_id)
-        print(result)
+        ctx.obj.client.delete_flow(name, ctx.obj.project_id)
+        logger.info(f"Flow {name} deleted")
     except TimonApiException as e:
         logger.error(str(e))

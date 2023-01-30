@@ -83,7 +83,7 @@ def update_environment(ctx: typer.Context, name: str):
 @app.command("delete")
 def delete_environment(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.delete_environment(name, ctx.obj.project_id)
-        print(result)
+        ctx.obj.client.delete_environment(name, ctx.obj.project_id)
+        logger.info(f"Environment {name} deleted")
     except TimonApiException as e:
         logger.error(str(e))

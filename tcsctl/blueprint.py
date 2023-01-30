@@ -84,7 +84,7 @@ def update_blueprint(ctx: typer.Context, name: str):
 @app.command("delete")
 def delete_blueprint(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.delete_blueprint(name, ctx.obj.project_id)
-        print(result)
+        ctx.obj.client.delete_blueprint(name, ctx.obj.project_id)
+        logger.info(f"Blueprint {name} deleted")
     except TimonApiException as e:
         logger.error(str(e))

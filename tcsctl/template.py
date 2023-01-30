@@ -73,7 +73,7 @@ def update_template(ctx: typer.Context, name: str):
 @app.command("delete")
 def delete_template(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.delete_template(name, ctx.obj.project_id)
-        print(result)
+        ctx.obj.client.delete_template(name, ctx.obj.project_id)
+        logger.info(f"Template {name} deleted")
     except TimonApiException as e:
         logger.error(str(e))

@@ -61,8 +61,8 @@ def create_deployment(ctx: typer.Context, name: str, template: str):
 @app.command("destroy")
 def destroy_deployment(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.destroy_deployment(name, ctx.obj.project_id)
-        print(result)
+        ctx.obj.client.destroy_deployment(name, ctx.obj.project_id)
+        logger.info(f"Destroy of deployment {name} initiated")
     except TimonApiException as e:
         logger.error(str(e))
 
@@ -70,8 +70,8 @@ def destroy_deployment(ctx: typer.Context, name: str):
 @app.command("reconcile")
 def reconcile_deployment(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.reconcile_deployment(name, ctx.obj.project_id)
-        print(result)
+        ctx.obj.client.reconcile_deployment(name, ctx.obj.project_id)
+        logger.info(f"Reconcile of deployment {name} initiated")
     except TimonApiException as e:
         logger.error(str(e))
 
@@ -98,8 +98,8 @@ def update_deployment(name: str):
 @app.command("delete")
 def delete_deployment(ctx: typer.Context, name: str):
     try:
-        result = ctx.obj.client.delete_deployment(name, ctx.obj.project_id)
-        print(result)
+        ctx.obj.client.delete_deployment(name, ctx.obj.project_id)
+        logger.info(f"Deployment {name} deleted")
     except TimonApiException as e:
         logger.error(str(e))
 
