@@ -188,6 +188,7 @@ def get_deployment_states(
             )
             with open(f"{version_id}.tar", "wb") as fp:
                 fp.write(state)
+            print(f"State downloaded and saved to {version_id}.tar")
 
     except TimonApiException as e:
         logger.error(str(e))
