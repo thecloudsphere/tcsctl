@@ -7,7 +7,7 @@ terraform-sample:
     repository: thecloudsphere/registry
     repository_server: https://github.com
   blueprint:
-    name: terraform/openstack/minimal
+    name: terraform/openstack/hello-world
     repository: thecloudsphere/registry
     repository_server: https://github.com
   blueprint_version: main
@@ -28,7 +28,7 @@ ansible-sample:
     repository: thecloudsphere/registry
     repository_server: https://github.com
   blueprint:
-    name: ansible/openstack/minimal
+    name: ansible/openstack/hello-world
     repository: thecloudsphere/registry
     repository_server: https://github.com
   blueprint_version: main
