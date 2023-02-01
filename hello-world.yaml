@@ -1,7 +1,7 @@
 ---
-# tcsctl template import sample.yaml terraform-sample
-# tcsctl deployment create terraform terraform-sample
-terraform-sample:
+# tcsctl template import hello-world.yaml terraform-hello-world
+# tcsctl deployment create terraform terraform-hello-world
+terraform-hello-world:
   environment:
     name: terraform/openstack
     repository: thecloudsphere/registry
@@ -20,9 +20,9 @@ terraform-sample:
     prefix: "{{ tcs.name }}"
     "public network": public
 
-# tcsctl template import sample.yaml ansible-sample
-# tcsctl deployment create ansible ansible-sample
-ansible-sample:
+# tcsctl template import hello-world.yaml ansible-hello-world
+# tcsctl deployment create ansible ansible-hello-world
+ansible-hello-world:
   environment:
     name: ansible/base
     repository: thecloudsphere/registry
