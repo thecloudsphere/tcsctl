@@ -550,8 +550,13 @@ class Timon:
                         repository_key = environment_data["repository_key"]
                         if type(repository_key) == dict:
                             if repository_key["type"] == "file":
-                                with open(v["path"]) as fp:
-                                    repository_key = fp.read()
+                                try:
+                                    with open(v["path"]) as fp:
+                                        repository_key = fp.read()
+                                except FileNotFoundError:
+                                    raise TimonException(
+                                        f"Required file {v['path']} not found"
+                                    )
                     environment = self.import_environment(
                         environment_data["name"],
                         environment_data["repository"],
@@ -582,8 +587,13 @@ class Timon:
                         repository_key = blueprint_data["repository_key"]
                         if type(repository_key) == dict:
                             if repository_key["type"] == "file":
-                                with open(v["path"]) as fp:
-                                    repository_key = fp.read()
+                                try:
+                                    with open(v["path"]) as fp:
+                                        repository_key = fp.read()
+                                except FileNotFoundError:
+                                    raise TimonException(
+                                        f"Required file {v['path']} not found"
+                                    )
                     blueprint = self.import_blueprint(
                         blueprint_data["name"],
                         blueprint_data["repository"],
@@ -607,9 +617,12 @@ class Timon:
         for k, v in inputs.items():
             if type(v) == dict:
                 if v["type"] == "file":
-                    with open(v["path"]) as fp:
-                        v = fp.read()
-                        inputs[k] = v
+                    try:
+                        with open(v["path"]) as fp:
+                            v = fp.read()
+                            inputs[k] = v
+                    except FileNotFoundError:
+                        raise TimonException(f"Required file {v['path']} not found")
         template = TemplateWithInputsBase(
             blueprint_id=str(blueprint_id),
             blueprint_version=blueprint_version,
