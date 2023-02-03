@@ -5,6 +5,7 @@ map(str(), include('flow'))
 flow:
   name: str()
   description: str(multiline=True, required=False)
+  control: str(required=False)
   steps: list(include('step'), min=1)
 
 step:
