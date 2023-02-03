@@ -13,4 +13,7 @@ as self-service.
 Install the CLI for The Cloudsphere with ``pip3 install tcsctl``.
 
 A Getting Started Guide can be found in the documentation for The Cloudsphere:
-https://thecloudsphere.io/docs/getting-started
+https://thecloudsphere.io/docs/getting-started.
+
+Hello World examples can be found in the repository
+https://github.com/thecloudsphere/hello-world.
