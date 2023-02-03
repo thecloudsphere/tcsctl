@@ -5,7 +5,7 @@ blueprint:
   repository: str()
   name: str()
   description: str(multiline=True)
-  schedule: str(required=False)
+  reconcile_schedule: str(required=False)
   environment: include('environment')
   versions: list(include('version'), min=1)
   control: include('control', required=False)
