@@ -623,14 +623,20 @@ class Timon:
                             inputs[k] = v
                     except FileNotFoundError:
                         raise TimonException(f"Required file {v['path']} not found")
+
         template = TemplateWithInputsBase(
-            blueprint_id=str(blueprint_id),
-            blueprint_version=blueprint_version,
-            environment_id=str(environment_id),
-            environment_version=environment_version,
             inputs=yaml.dump(inputs),
             name=name,
         )
+
+        if blueprint_id:
+            template.blueprint_id = str(blueprint_id)
+            template.blueprint_version = blueprint_version
+
+        if environment_id:
+            template.environment_id = str(environment_id)
+            template.environment_version = environment_version
+
         result = self.client.post(f"templates/{project_id}", data=template.dict())
         template = Template(**result.data)
         return template
