@@ -10,6 +10,7 @@ import uuid as uuid_pkg
 
 from dynaconf.utils.boxing import DynaBox
 from dynaconf.vendor.box.exceptions import BoxKeyError
+import jwt
 from pydantic import ValidationError
 import requests
 import yaml
@@ -41,6 +42,7 @@ class Client:
         logger.debug(f"api_url = {self.api_url}")
 
         if token:
+            data = {"access_token": token.access_token, "sub": token.user_id}
             # refresh token expired
             if (
                 datetime.now().timestamp() - token.issue_timestamp
@@ -55,20 +57,17 @@ class Client:
                 logger.debug(
                     f"Token refresh required, refreshing token for {self.profile.name}"
                 )
-                login_data = {
-                    "organisation": token.organisation_id,
-                    "project": token.project_id,
-                    "refresh_token": token.refresh_token,
-                }
-                result = self.post("auth/tokens", data=login_data)
-                self.token = Token(**result.data)
-                write_token_to_file(self.profile.name, self.token)
+                data["refresh_token"] = token.refresh_token
+
+            token_data = jwt.encode(
+                data,
+                "efdb8edec41ebda34aceebddb858efb4b7e1be3b150f45d6abed7f0ec41d31de",
+                algorithm="HS256",
+            )
 
             # set authorization header
             self.headers = {
-                "Authorization": f"Bearer {token.access_token}",
-                "X-Timon-Project-ID": token.project_id,
-                "X-Timon-Organisation-ID": token.organisation_id,
+                "Authorization": f"Bearer {token_data}"
             }
 
     def login(self) -> Token:
@@ -76,29 +75,32 @@ class Client:
         if not password:
             self.profile.auth.password = getpass()
 
-        login_data = {
-            "password": self.profile.auth.password,
-            "username": self.profile.auth.username,
-        }
+        login_data = f"grant_type=&username={self.profile.auth.username}&password={self.profile.auth.password}&scope=&client_id=&client_secret"
 
-        try:
-            login_data["organisation"] = self.profile.auth.organisation
-        except BoxKeyError:
-            pass
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
-        try:
-            login_data["project"] = self.profile.auth.project
-        except BoxKeyError:
-            pass
+        result = self.post(
+            "auth/token",
+            data=login_data,
+            headers=headers,
+        )
 
-        result = self.post("auth/tokens", data=login_data)
-
-        self.token = Token(**result.data)
+        token_data = jwt.decode(
+            result.data["access_token"],
+            "efdb8edec41ebda34aceebddb858efb4b7e1be3b150f45d6abed7f0ec41d31de",
+            algorithms=["HS256"],
+        )
+        self.token = Token(**token_data)
         write_token_to_file(self.profile.name, self.token)
         return self.token
 
     def _do(
-        self, http_method: str, endpoint: str, ep_params: Dict = None, data: Dict = None
+        self,
+        http_method: str,
+        endpoint: str,
+        ep_params: Dict = None,
+        data: Dict = None,
+        headers: Dict = {},
     ) -> Result:
         url = urljoin(str(self.api_url), endpoint)
 
@@ -112,7 +114,7 @@ class Client:
                 method=http_method,
                 url=url,
                 verify=not self.profile.insecure,
-                headers=self.headers,
+                headers=self.headers | headers,
                 params=ep_params,
                 json=data,
             )
@@ -142,26 +144,64 @@ class Client:
         # logger.error(log_line)
         raise TimonApiException(f"{response.status_code}: {response.reason}")
 
-    def get(self, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
+    def get(
+        self,
+        endpoint: str,
+        ep_params: Dict = None,
+        data: Dict = None,
+        headers: Dict = {},
+    ) -> Result:
         return self._do(
-            http_method="GET", endpoint=endpoint, ep_params=ep_params, data=data
+            http_method="GET",
+            endpoint=endpoint,
+            ep_params=ep_params,
+            data=data,
+            headers=headers,
         )
 
-    def patch(self, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
+    def patch(
+        self,
+        endpoint: str,
+        ep_params: Dict = None,
+        data: Dict = None,
+        headers: Dict = {},
+    ) -> Result:
         return self._do(
-            http_method="PATCH", endpoint=endpoint, ep_params=ep_params, data=data
+            http_method="PATCH",
+            endpoint=endpoint,
+            ep_params=ep_params,
+            data=data,
+            headers=headers,
         )
 
-    def post(self, endpoint: str, ep_params: Dict = None, data: Dict = None) -> Result:
+    def post(
+        self,
+        endpoint: str,
+        ep_params: Dict = None,
+        data: Dict = None,
+        headers: Dict = {},
+    ) -> Result:
         return self._do(
-            http_method="POST", endpoint=endpoint, ep_params=ep_params, data=data
+            http_method="POST",
+            endpoint=endpoint,
+            ep_params=ep_params,
+            data=data,
+            headers=headers,
         )
 
     def delete(
-        self, endpoint: str, ep_params: Dict = None, data: Dict = None
+        self,
+        endpoint: str,
+        ep_params: Dict = None,
+        data: Dict = None,
+        headers: Dict = {},
     ) -> Result:
         return self._do(
-            http_method="DELETE", endpoint=endpoint, ep_params=ep_params, data=data
+            http_method="DELETE",
+            endpoint=endpoint,
+            ep_params=ep_params,
+            data=data,
+            headers=headers,
         )
 
     def fetch_data(self, url: str) -> bytes:
