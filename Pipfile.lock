@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0737057fee7adbe48dc75ce46c6ffe41e07e166cdd6546079de3be08e6472bda"
+            "sha256": "990edf5dcdb36083170c6d63487a63e29806820e1cef8f2da2b86541fe27efd0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -161,11 +161,11 @@
         },
         "loguru": {
             "hashes": [
-                "sha256:066bd06758d0a513e9836fd9c6b5a75bfb3fd36841f4b996bc60b547a309d41c",
-                "sha256:4e2414d534a2ab57573365b3e6d0234dfb1d84b68b7f3b948e6fb743860a77c3"
+                "sha256:1612053ced6ae84d7959dd7d5e431a0532642237ec21f7fd83ac73fe539e03e1",
+                "sha256:b93aa30099fa6860d4727f1b81f8718e965bb96253fa190fab2077aaad6d15d3"
             ],
             "index": "pypi",
-            "version": "==0.6.0"
+            "version": "==0.7.0"
         },
         "markupsafe": {
             "hashes": [
@@ -366,10 +366,10 @@
         },
         "pytz": {
             "hashes": [
-                "sha256:01a0681c4b9684a28304615eba55d1ab31ae00bf68ec157ec3708a8182dbbcd0",
-                "sha256:78f4f37d8198e0627c5f1143240bb0206b8691d8d7ac6d78fee88b78733f8c4a"
+                "sha256:1d8ce29db189191fb55338ee6d0387d82ab59f3d00eac103412d64e0ebd0c588",
+                "sha256:a151b3abb88eda1d4e34a9814df37de2a80e301e68ba0fd856fb9b46bfbbbffb"
             ],
-            "version": "==2022.7.1"
+            "version": "==2023.3"
         },
         "pyyaml": {
             "hashes": [
