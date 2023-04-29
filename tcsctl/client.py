@@ -42,7 +42,13 @@ class Client:
         logger.debug(f"api_url = {self.api_url}")
 
         if token:
-            data = {"access_token": token.access_token, "sub": token.user_id}
+            data = {
+                "access_token": token.access_token,
+                "organisation_id": token.organisation_id,
+                "project_id": token.project_id,
+                "sub": token.user_id,
+                "user_id": token.user_id,
+            }
             # refresh token expired
             if (
                 datetime.now().timestamp() - token.issue_timestamp
@@ -66,9 +72,7 @@ class Client:
             )
 
             # set authorization header
-            self.headers = {
-                "Authorization": f"Bearer {token_data}"
-            }
+            self.headers = {"Authorization": f"Bearer {token_data}"}
 
     def login(self) -> Token:
         password = self.profile.auth.get("password")
