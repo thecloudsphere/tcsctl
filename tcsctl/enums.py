@@ -11,7 +11,6 @@ class DeploymentAction(str, Enum):
 
 @unique
 class DeploymentType(str, Enum):
-    flow = "FLOW"
     environment = "ENVIRONMENT"
 
 
@@ -28,22 +27,6 @@ class DeploymentStatus(str, Enum):
     reconcile = "RECONCILE"
     reconciled = "RECONCILED"
     validate = "VALIDATE"
-
-
-@unique
-class FlowAction(str, Enum):
-    create = "CREATE"
-    destroy = "DESTROY"
-    none = "NONE"
-
-
-@unique
-class FlowStatus(str, Enum):
-    create = "CREATE"
-    created = "CREATED"
-    destroy = "DESTROY"
-    destroyed = "DESTROYED"
-    none = "NONE"
 
 
 @unique

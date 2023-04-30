@@ -16,7 +16,6 @@ from .exceptions import (
     TimonLoginRequiredException,
     TimonTokenExpiredException,
 )
-from .flow import app as app_flow
 from .project import app as app_project
 from .schemas import validate_content
 from .template import app as app_template
@@ -26,7 +25,6 @@ app = typer.Typer()
 app.add_typer(app_blueprint, name="blueprint")
 app.add_typer(app_deployment, name="deployment")
 app.add_typer(app_environment, name="environment")
-app.add_typer(app_flow, name="flow")
 app.add_typer(app_project, name="project")
 app.add_typer(app_template, name="template")
 

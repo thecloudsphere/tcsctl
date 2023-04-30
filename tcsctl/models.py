@@ -8,8 +8,6 @@ from .enums import (
     DeploymentAction,
     DeploymentStatus,
     DeploymentType,
-    FlowAction,
-    FlowStatus,
 )
 
 
@@ -138,22 +136,6 @@ class Template(TimonBaseModel, TemplateBase):
 
 class TemplateWithInputs(TimonBaseModel, TemplateWithInputsBase):
     pass
-
-
-# flow
-
-
-class FlowBase(BaseModel):
-    name: Optional[str]
-
-
-class Flow(TimonBaseModel, FlowBase):
-    action: Optional[FlowAction] = FlowAction.none
-    status: Optional[FlowStatus] = FlowStatus.none
-
-
-class FlowWithSteps(Flow):
-    steps: Optional[str]
 
 
 # other

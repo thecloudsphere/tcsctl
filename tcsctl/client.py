@@ -475,60 +475,6 @@ class Timon:
         environment = Environment(**result.data)
         return environment
 
-    # flows
-
-    def get_flow_id(self, flow: str, project: str = None) -> uuid_pkg.UUID:
-        if is_valid_uuid(flow):
-            return flow
-
-        project_id = self.get_project_id(self.organisation_id, project)
-
-        result = self.client.get(f"flows/{project_id}", ep_params={"q": flow})
-        flow = Template(**result.data[0])
-        return flow.id
-
-    def delete_flow(self, flow: str, project: str) -> Result:
-        project_id = self.get_project_id(self.organisation_id, project)
-        flow_id = self.get_flow_id(flow, project_id)
-        result = self.client.delete(f"flows/{project_id}/{flow_id}")
-        return result
-
-    def get_flow(self, flow: str, project: str) -> Flow:
-        project_id = self.get_project_id(self.organisation_id, project)
-        flow_id = self.get_flow_id(flow, project_id)
-        result = self.client.get(f"flows/{project_id}/{flow_id}")
-        flow = Flow(**result.data)
-        return flow
-
-    def get_flows(self, project: str) -> Flow:
-        project_id = self.get_project_id(self.organisation_id, project)
-        result = self.client.get(f"flows/{project_id}")
-        flows = [Flow(**flow) for flow in result.data]
-        return flows
-
-    def import_flow(self, path: str, name: str, project: str) -> Flow:
-        project_id = self.get_project_id(self.organisation_id, project)
-
-        logger.debug(f"Validating flow {path}")
-        try:
-            with open(path) as fp:
-                validate_content(fp.read(), "flow")
-        except Exception as e:
-            raise TimonException(f"Flow {path} is not valid:\n{e}")
-
-        with open(path) as fp:
-            data = yaml.safe_load(fp)
-
-        if name not in data:
-            raise TimonException(f"Flow {name} not found in {path}")
-
-        flow_data = data[name]
-        flow_data["steps"] = yaml.dump(flow_data["steps"])
-
-        result = self.client.post(f"flows/{project_id}", data=flow_data)
-        flow = Flow(**result.data)
-        return flow
-
     # templates
 
     def get_template_id(self, template: str, project: str = None) -> uuid_pkg.UUID:
